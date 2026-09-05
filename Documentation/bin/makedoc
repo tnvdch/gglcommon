@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+#
+
+makesgml
+makedvi
+makeps
+makehtml
+rm ../sgml/DOC*.sgml
+

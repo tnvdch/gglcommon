@@ -1,0 +1,379 @@
+GGL Common Library ChangLog
+===========================
+
+Version 1.13.5 (EF)
+Wed Jan 30 17:05:48 CET 2002
+cmdline: added output of default values and incremental option flag
+
+Version 1.13.4 (MC)
+Wed Jan 30 13:50:11 CET 2002
+pgn zval completely new version with options etc.
+
+Versio 1.13.3 (MC) Wed Dec 12 16:50:54 CET 2001
+changes in xyz2xyz concerning reading of data
+simplifications (necessary because of some strange behaviour)
+
+Version 1.13.2 (EF)
+Fri Aug 31 13:20:49 CEST 2001
+define changes to make common lib compile under Cygwin
+http://www.cygwin.com/
+ftp://sunsite.cnlab-switch.ch/mirror/cygwin/
+
+Version 1.13.1 (MC) (no version change to previous)
+Fri Aug 31 10:21:18 CEST 2001
+2 small changes : 
+ - subroutine within permutation_next eliminated (now directly included in subroutine)
+   because of C++ compilation errors
+ - print in SED_Tm_error changed: now stating explicitely that an error occured.
+
+Version 1.13.1 (MC)
+Wed Aug 22 18:19:27 CEST 2001
+new routines implemented in tools.c
+for determining all permutation of n integer in the range from 0..(n-1)
+permutation_init / permutation_next / permutation_free / permutation_ctrlprint
+
+Version 1.12.1 (MC)
+Tue Aug  7 11:47:19 CEST 2001
+new function added in inout : base_name
+
+Version 1.11.1 (MC)
+Fri Jul 27 19:16:46 CEST 2001
+new function added in intersection :  intersection_line_segment
+
+Version 1.11.0 (MC)
+Wed Jul 25 18:15:39 CEST 2001
+some modifications to gridop
+- new function added : g_maxof4neighbor
+- function g_inter_simple changed !!
+
+Version 1.10.1
+Tue Jul  3 10:45:03 CEST 2001
+in inout new function read_colfile implememented 
+define MAXLINELENGTH moved from gridop to global
+
+Version 1.9.7
+Fri Jun  8 14:35:05 CEST 2001
+in xyz_to_azel (crdtrans) azirange [0,2PI] instead of [-PI,PI]
+
+Version 1.9.5
+Tue Apr 24 15:30:21 CEST 2001
+zval grdrasternr changed to 101 (dhm25)
+
+Version 1.9.4
+Wed Feb 21 14:26:45 CET 2001
+some cosmetics in order to remove all warnings compiling with C 
+and all errors compiling with C++ (void * changed to char * in gridop
+because ANSI C++ forbids arithmetic on void pointers !!)
+
+Version 1.9.3
+Don Dez 21 17:15:26 CET 2000
+geoidadd: change interpolation method from simple to bilinear (EF)
+
+Version 1.9.2
+Mon Dez 11 10:45:32 CET 2000
+xyz2grd: Exponent in weight function can now be chosen from command line (EF)
+xyz2grd: new option -z, new feature output of remaining line of -f (EF)
+
+Version 1.9.1
+Thu Aug 17 11:50:38 CEST 2000
+xyz2grd: added output of mkgrd parameters to gmt grid comment
+
+Version 1.9.0
+Tue Aug 15 17:29:45 CEST 2000
+mapras: bugfixes and inclusion of 1:100000 scale. (EF)
+mapcut: complete rewrite and reorganization (EF)
+
+Version 1.8.11
+Sat Aug 12 12:50:34 CEST 2000
+chain.c: bugfix in chain_free: we need to free also last element! (EF)
+
+Version 1.8.10
+Wed Jul 26 10:39:03 CEST 2000
+cmdline: buxfix: int instead of char (EF)
+tconv: fixed default digits printed, who changed that before?!? (EF)
+
+Version 1.8.9
+Tue Jul 25 14:42:29 CEST 2000
+Some adaptations to compile on AIX (EF)
+
+Version 1.8.8
+Thu Jul  6 18:51:48 CEST 2000
+New compilation as C++ library
+xyz2grd : name of local variable new changed to newnode 
+(new is a reserved word for C++)  (MC)
+
+Version 1.8.7
+Fri May 12 11:21:54 CEST 2000
+Changed WITH_DEBUG in sed_matcalc to DEVEL_MAT_DEBUG
+
+Version 1.8.6
+Mon Apr 17 18:03:04 CEST 2000
+new documentation by Marcel Sutter
+
+Version 1.8.5
+Tue Apr 11 18:45:03 CEST 2000
+in Makefile: WITH_DEBUG option activated
+ - some adjustements in SED_Tmatcalc 
+ - m_zero debugged using now actual size of matrix
+   instead of dimsize
+
+Version 1.8.4
+Tue Mar 28 19:07:24 CEST 2000
+- inout.c: function col_offset
+- tconv.c: option -N now using col_offset
+
+Version 1.8.3
+- xyz2grd.c: bugfix of memory alloc/free in blockchain_procpts (EF)
+- xyz2grd.c, mkgrd: optionally output ASCII Schlauch (EF)
+- gridop.c: new function g_writeasciigrid (EF)
+
+Version 1.8.2
+- vitacc : Fully revised. More options, more carefully tested (YP)
+
+Version 1.8.1
+- ggl_time.c : Modification of localtimenow (YP)
+- mapcut.c: added GMT colortable and gridpoints output (EF)
+- sunras.c: added GMT colortable output (EF)
+- mapras.c: new option -G (EF)
+
+Version 1.8.0
+- vitacc : new application 
+- matcalc.c : changes in function m_polynom_approx:
+                - added weighted observations -> one more calling param.
+                  if col_w < 0, all weights are set to 1
+                - modify the condition for the storage of the results
+                  (do not store if col_? == -1 now: col_? < 0)
+              add function m_polynom_interpol (formerly in winterpol.c)
+- winterpol.c : moved m_polynom_interpol to matcalc.c
+- winterpol.h : moved m_polynom_interpol to matcalc.h
+
+Version 1.7.22
+Tue Feb 22 14:16:36 CET 2000
+- tconv: added option -N to skip n columns before parsing time string (YP)
+
+Version 1.7.21
+Thu Dec  2 15:09:08 CET 1999
+- xyz2grd: added column description to procpts output (EF)
+
+Version 1.7.20
+Mon Nov  8 11:59:20 CET 1999
+- mkgrd, xyz2grd: new options -f, -D; enable interpolation to file x/y instead
+                  of fixed grid (EF)
+
+Version 1.7.19
+Wed Nov  3 08:50:25 CET 1999
+- global.h: remove definition of CMAX, cmax, CMIN and cmin  (YP)
+            (CMIN: conflict with definition in /usr/include/sys/ttydefaults.h)
+
+Version 1.7.18
+Tue Nov  2 17:00:18 CET 1999
+- tconv: fixed memory leakage: not properly disposed of strtime return val (EF)
+
+Version 1.7.17
+Thu Oct 14 11:49:20 CEST 1999
+- xyz2grd: fixed bug in address calculation
+- chain: fixed bug in newelement
+- geoidadd: rewritten to static entireline and using cmdline options
+
+Version 1.7.16
+Tue Oct 12 14:23:03 CEST 1999
+- mkgrd: added option -M, modified option -b default
+
+Version 1.7.15
+Mon Oct 11 17:45:37 CEST 1999
+- mkgrd: beta release of application, supports surfer and gmt grid output
+- gridop: new function gmt_writegrid, export of g_setdataparameters
+- xyz2grd: beta release in conjuncion with mkgrd
+
+Version 1.7.14
+Thu Oct  7 18:36:25 CEST 1999
+- xyz2grd: new unit for application mkgrd (EF)
+- mkgrd: new application (EF)
+
+Version 1.7.13
+Thu Oct  7 16:49:06 CEST 1999
+- crdtrans: 2 new functions added
+              top_to_xyz2 and  azel_to_xyz (MC)
+
+Version 1.7.12
+Thu Oct  7 10:13:08 CEST 1999
+- ggltime: fix bug in gps_to_dat
+
+Version 1.7.11
+Tue Sep 28 15:09:11 CEST 1999
+- ggltime: new function gps_to_dat, addresses double resolution problem
+
+Version 1.7.10
+Fri Sep  3 16:40:15 CEST 1999
+- in global.c common_compileinfo defined
+  Makefile accordingly changed (-DLIBCOMP)
+- added Copyright info to all files (GNU GPL) except nfmatcalc!
+
+Version 1.7.9
+Wed Aug 18 10:57:52 CEST 1999
+- additional check in m_cholesky added (MC)
+
+Version 1.7.8
+Tue Aug 17 15:08:35 CEST 1999                                 
+- changes in functions m_max_col/m_min_col/m_max/m_min/m_abs_max
+  in matcalc : NULL pointer allowed for integer containing 
+  returned row or col. (MC)
+  
+Version 1.7.7
+Mon Aug 16 15:13:17 CEST 1999
+- new function iscomment added to inout (MC)
+
+Version 1.7.6
+Fri Aug  6 18:06:45 CEST 1999
+- debugging of R_option and I_option in gridop.c (MC)
+
+Version 1.7.5
+Thu Jul 29 15:19:45 CEST 1999
+- sed_matcalc: new function m_resize added (MC)
+
+Version 1.7.4
+Tue Jul  6 11:41:41 CEST 1999
+- ggl_time: Rename timenow to systimenow (YP)
+- ggl_time: New function localtimenow (YP)
+
+Version 1.7.3
+Tue Jul  6 09:52:59 CEST 1999
+- ggl_time: bugfix in mjdnow, microseconds instead of milli
+
+Version 1.7.2
+Wed Jun 30 17:25:44 CEST 1999
+- new units sunras, mapnr, mapcut from Marc Troller
+- new application mapras from Marc Troller
+
+Version 1.7.1
+Wed Jun 30 14:02:40 CEST 1999
+- inout: new function iszipped, to open pipe on zipped input (EF)
+- window: automagically detect zipped input (EF)
+
+Version 1.7.0
+Mon Jun 21 11:46:30 CEST 1999
+- window: added file name to struct for easier logging. (EF)
+- window: window_err: added filename option (EF)
+- inout: get_fname_wopath: bugfix, now always returns string with filename (EF)
+
+Version 1.6.20
+Thu Jun 10 15:45 CEST 1999
+- gridop: error in mask checking debugged (MC)
+- tconv: added option decimal year (MC)
+- new application zval (MC)
+
+Version 1.6.19
+Thu Jun  3 14:59 CEST 1999
+- addcol: bugfixes (MC)
+
+Version 1.6.18
+Thu Jun  3 10:10 CEST 1999
+- window: print_data_window: 2 format parameters added (MC)
+
+Version 1.6.17
+Thu Jun  3 09:47 CEST 1999
+- new application addcol: merge 2 files using 1 common column (MC)
+- gridop: bugfixes: changing long int to unsigned long int (MC)
+
+Version 1.6.16 (MC)
+Mon Apr 19 09:57 CEST 1999
+- routine m_det (calculation of determinant of a matrix) added 
+  (not fully debbuged and not documented)
+- added option JD and -k to tconv (EF)
+
+Version 1.6.15
+- bugfix in time_index_data_window
+
+Version 1.6.14
+- bugfix in readascii (file now closed in routine)
+
+Version 1.6.13
+- bugfix in matcalc routines writebin and readbin
+- 2 new routines writebin2 and readbin2 added (not yet documented)
+
+Version 1.6.12
+- cmdline.c added time argument parsing using ggl_time.c
+- added new application gpsdate
+- added new option type=5 (Year DayOfYear HourOfDay) for plotting purposes
+  to tconv
+
+Version 1.6.11
+- new functions in winterpol.[ch]
+
+Version 1.6.10
+- changes to make libcommon compile on Solaris
+
+Version 1.6.9
+- crdtrans.c changed PI to M_PI for portability
+
+Version 1.6.8
+- mat3 converted to sed version, now long double supported as well
+
+Version 1.6.7
+- added putvalue in gridop.c
+
+Version 1.6.6
+- angles.h moved out of swiss.h
+
+Version 1.6.5
+- fixed compiling apps with date
+
+Version 1.6.3
+- added g++ support (MC)
+
+Version 1.6.2
+- source version of apps now with date and person
+
+
+Version 1.6.1
+- no error on filling buffer in update_window
+- final version update_window
+
+Version 1.6.0
+- sed_matcalc update
+- improved pattern matching in trafo, new puterr in errproc
+- new function gputerr
+
+Version 1.5.0
+
+  Fri Oct 30 17:54:04 CET 1998
+- reorganized directory structure
+- several bugfixes in matrix routines
+- new function calls in trafo and inout, have a look
+  at rlog of the sources
+
+Version 1.02
+
+  Wed Apr 22 15:25:33 CEST 1998
+- reorganized directory structure
+
+Version 0.30
+
+  Mon Jan  5 17:30:22 CET 1998
+- fixed bug in ?matcalc.c (EF)
+
+  Wed Dec 24 12:02:56 CET 1997
+- fixed bugs in matcalc.c and added new routines to it
+  (mainly debugging output routines) MC
+
+  Fri Sep 26 18:12:05 CEST 1997
+- added parse_line and get_fileformat in parse.c (inout.h)
+- added quaternion functions in quatern.c (quatern.h) MC
+
+  Sun Aug 31 23:14:23 MET DST 1997
+- added arc_intersect to tools.c
+
+Version 0.29
+
+  Mon Aug 18 17:00:13 MET DST 1997
+- improved documentation for inout.c
+
+Version 0.28
+
+  Fri Aug  8 15:23:48 MET DST 1997
+- matcalc.c, lmatcalc.c:
+  functions m_del_row, m_del_col fixed bug with upper loop limit
+
+- Starting to write a ChangLog
+
+# end of ChangeLog

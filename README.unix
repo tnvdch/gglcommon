@@ -1,0 +1,43 @@
+GGL Common Library  ---  Version 1.02 beta
+------------------------------------------
+
+22-04-1998
+
+This release of the C common library should be quite stable.
+Documentation is still to create. Check the header files...
+
+Compilation
+-----------
+On Linux, simply type `make dep; make lib; make apps'.
+Check the path settings in the Makefile and the configurable
+entries in `./config.h'. 
+
+Installation
+------------
+You probably need to be root
+to install the shared libraries for all users.
+
+Just copy the files `include/common.h' and `obj_$PLATFORM/libcommon.a'
+to $INSTDIR/include and $INSTDIR/lib respectively, where
+$PLATFORM might be i386 or alpha or something like that,
+$INSTDIR  could be /usr or /usr/local ...
+
+Non-Linux platforms
+-------------------
+On other platforms, it is up to you to check the necessary modifications.
+Please tell me what you did, and what systems you use, when you get
+it running.
+
+Bugs
+----
+
+Consult the file BUGS, it might tell you of what we already know.
+
+There probably still are some of them. Please send me a patch, whenever
+you find one.
+
+Authors
+-------
+Etienne Favey <favey@geod.ethz.ch>
+Marc Cocard <cocard@geod.ethz.ch>
+

@@ -1,0 +1,127 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/crdtrans.sgml,v $
+#
+#   $Id: crdtrans.sgml,v 1.3 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: crdtrans.sgml,v $
+#   Revision 1.3  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.2  1998/06/15 16:24:25  cocard
+#   function center_angle added (MC)
+#
+#   Revision 1.1  1998/05/29 12:01:47  cocard
+#   Initial revision
+#
+#
+#
+
+<sect>crdtrans (Revision 1.1 -- 22/04/1998)
+
+
+<p> The unit <tt/crdtrans/ regroups additional transformation routines
+not included in <tt/trafo/. The units of all parameters used are
+either meters or radians.
+
+<sect1> Routines
+<p>
+
+<sect2>ellipse_circumference
+<p>
+<tscreen><verb>
+double ellipse_circumference (const double a, const double ex)
+</verb></tscreen>
+<p>The function returns the circumference of an ellipsoid given the major axis <tt/a/ and
+the excentricity <tt/ex/.
+
+<sect2>center_angle
+<p> 
+<tscreen><verb>
+double center_angle( const double lat1,
+                     const double lon1,
+                     const double lat2,
+                     const double lon2)
+</verb></tscreen>
+<p>
+This function calculates the center angle in [radian] between
+two points given by their sperical coordinates <tt/lat1, lon1/ 
+resp. <tt/lat2, lon2/ based on spherical cosine.
+
+<sect2>ellipse_approxdist
+<p>
+<tscreen><verb>
+double ellipse_approxdist (const double lat1,const double lon1,
+			   const double lat2,const double lon2,
+			   const struct ellipsoid ell)
+</verb></tscreen>
+<p>
+This functions returns the ellipsoidal distance between 2 points on
+the ellipsoid. (approximated value based on spherical approximation
+using the curvature at the mean latitude value of 2 points). Input
+parameters are the latitude <tt/lat1/, longitude <tt/lon1/ of 
+the first point and latitude <tt/lat2/, longitude <tt/lon2/ of
+the second point. <tt/ell/ contains the ellipsoid definition.
+
+<sect2>xyz_to_azel
+<p>
+<tscreen><verb>
+int xyz_to_azel (double xyz1[3], double xyz2[3],  struct ellipsoid ell,
+		 double *dist, double *elev, double *azi)
+</verb></tscreen>
+<p> Given 2 points in geocentrical coordinates <tt/xyz1/ and <tt/xyz2/
+and ellipsoidal parameters <tt/ell/, the distance <tt/dist/, the
+elevation <tt/ele/, and the azimuth <tt/azi/ form point 1 to point 2
+are calculated with respect to the ellipsoidal normal direction. 
+The elevation angle is <tt/0/ at the horizon and <tt>PI/2</tt> 
+at he zenith. The azimuth angle is <tt/0/ in North direction 
+and clockwise incrementing.
+
+<sect2>azel_to_xyz
+<p>
+<tscreen><verb>
+int azel_to_xyz (double xyz[3], double azi, double ele,
+		 double dxyz[3], stuct ellipsoid ell)
+</verb></tscreen>
+<p>
+
+
+<sect2>top_to_xyz
+<p>
+<tscreen><verb>
+int top_to_xyz (double lat, double lon,	double dtop[3],	double dxyz[3])
+</verb></tscreen>
+<p> Conversion of topocentric coordinates <tt/dtop/ of a vector 
+to its corresponding geocentric coordinates. The orientation
+of the topocentric vector : dtop[0] =<tt/East/ / <tt/dtop[1]/ =  North 
+/ <tt/dtop[2]/= up. Latitude <tt/lat/ and longitude <tt/lon/ define
+the orientation of the topocentric z-axis with respect to
+the geocentrical frame. 
+
+<sect2>xyz_to_top<em/x/
+<p>
+<tscreen><verb>
+int xyz_to_top (double lat, double lon, double dxyz[3], double dtop[3])
+</verb></tscreen>
+<p> Conversion of cartesion coordinates <tt/dxyz/ of a vector to its 
+corresponding geocentric coordinates. The orientation
+of the topocentric vector : dtop[0] =<tt/East/ / <tt/dtop[1]/ =  North 
+/ <tt/dtop[2]/= up. Latitude <tt/lat/ and longitude <tt/lon/ define
+the orientation of the topocentric z-axis with respect to
+the geocentrical frame. 
+
+<p>
+<tscreen><verb>
+int xyz_to_top2 (double xyz[3], double dxyz[3], double dtop[3], struct ellipsoid ell)
+</verb></tscreen>
+<p> Conversion of cartesion coordinates <tt/dxyz/ of a vector to its 
+corresponding geocentric coordinates. The orientation
+of the topocentric vector : dtop[0] =<tt/East/ / <tt/dtop[1]/ =  North 
+/ <tt/dtop[2]/= up. Instead of latitude and longitude as 
+in function <tt/xyz_to_top/ the geocentric coordinates <tt/xyz/ and
+a ellipsoid <tt/ell/ are passed to the routine. (They are converted
+locally to latitude and longitude).
+

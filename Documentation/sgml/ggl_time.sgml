@@ -1,0 +1,252 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/ggl_time.sgml,v $
+#
+#   $Id: ggl_time.sgml,v 1.4 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: ggl_time.sgml,v $
+#   Revision 1.4  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.3  1999/07/06 09:38:24  ypeter
+#   Update documentation for systimenow and localtimenow
+#
+#   Revision 1.2  1998/09/09 12:21:18  cocard
+#   *** empty log message ***
+#
+#   Revision 1.1  1998/05/29 12:02:16  cocard
+#   Initial revision
+#
+#
+#
+
+<sect> ggl_time (Revision 1.1 -- 22/04/98)
+
+<p>The unit <tt/ggl_time/ regroups routines for time conversions of 
+different representation. Most of the routines are conversion to or
+from <tt/mjd/ (Modified Julian Date), which plays a central role here.
+The unit of <tt/mjd/ are days. 
+
+<sect1> Definition of Type ttime
+
+<p> The following time structure is defined:
+
+<tscreen><verb>
+struct ttime {
+  int year;  
+  int month;  
+  int day;
+  int hour;  
+  int min;    
+  double sec;
+  double mjd;
+}
+</verb></tscreen>
+
+<p> The following macros are defined:
+
+<tscreen><verb>
+define JULDAT0  (2400000.5)
+</verb></tscreen>
+<p> which allows to convert a mjd (Modified Julian Date) to a Julian Date 
+(Julian Date = mjd +JULDAT0)
+
+<tscreen><verb>
+SYSMJD0 (40587.0)
+</verb></tscreen>
+<p> which is the mjd corresponding to the epoch 00.00.00 January 1,1970 UTC.
+(Origin of the system time on POSIX systems).
+
+<tscreen><verb>
+GPSMJD0  (44244.0)
+</verb></tscreen>
+<p> which is the mjd corresponding to the epoch 00.00.00 June 6, 1980 UTC.
+(Origin of the GPS time system (GPSWEEK =0, SECOFWEEK = 0).
+
+
+<sect1> Time Conversion Routines
+<p>
+
+<sect2> leapyear
+<p>
+<tscreen><verb>
+ leapyear(int year)
+</verb></tscreen>
+<p>Returns <tt/1 (= TRUE)/ if <tt/year/ is a leap year and <tt/0 (=FALSE)/ 
+if not.
+
+<sect2>dat_to_mjd
+<p>
+<tscreen><verb>
+double dat_to_mjd (const int year, const int month, const int day,
+		   const int hour, const int min, const double sec)
+</verb></tscreen>
+<p> Conversion of calendar date (<tt/year month day hour min sec/ to <tt/mjd/.
+(returned value). 
+The calculation  only applies to Gregorian calendar dates. The routine
+should not be used for historical dates where the Julian calendar 
+was in use (before  1580 ???).
+
+<sect2>datmjd
+<p>
+<tscreen><verb>
+int datmjd (struct ttime *t)
+</verb></tscreen>
+<p> Same conversion as with routine <tt/dat_to_mjd/. The fields <tt/year
+ month day hour, min sec/ from the struct <tt/ttime/ are used to calculate
+mjd, which is stored in the field <tt/mjd/ of the struct.
+
+<sect2>mjd_to_dat
+<p>
+<tscreen><verb>
+int mjd_to_dat (double mjd,
+		int *year, int *month, int *day,
+		int *hour, int *min, double *sec)
+</verb></tscreen>
+<p> Conversion of <tt/mjd/ to the corresponding calendar day <tt/year month day
+hour min sec/.The calculation  only applies to Gregorian calendar dates. 
+The routine should not be used for historical dates where the Julian calendar 
+was in use (before  1580 ???).
+
+
+<sect2>mjddat
+<p>
+<tscreen><verb>
+dint mjddat (struct ttime *t)
+</verb></tscreen>
+<p>Same conversion as with routine <tt/mjd_to_dat/. The fields <tt/mjd/ 
+from the struct <tt/ttime/ is used to calculate the calendar date
+ which is stored in the field <tt/year month day hour min sec/ of the struct.
+
+
+<sect2>gps_to_mjd
+<p>
+<tscreen><verb>
+double gps_to_mjd (double sec,int week)
+</verb></tscreen>
+<p> Conversion of GPS time to <tt/mjd/. The GPS time is given by
+the following two values: <tt/week/ which is the GPS week and 
+<tt/sec/ which is the second in the GPS week. Note that the order
+is first <tt/sec/ than <tt/week/. Start time of GPS time 
+<tt/week=0 sec=0/ is epoch 00.00.00 June 6, 1980 UTC
+
+
+<sect2>mjd_to_gps
+<p>
+<tscreen><verb>
+int mjd_to_gps (double mjd, double *sec, int *week)
+</verb></tscreen>
+<p> Conversion of <tt/mjd/ to GPS time given by <tt/sec/ (seconds in
+GPS week) and <tt/week/ (GPS week).
+
+<sect2>yearday_to_mjd
+<p>
+<tscreen><verb>
+double yearday_to_mjd (int year,int daynr)
+</verb></tscreen>
+<p> Conversion of <tt/year/ and <tt/daynr/  to mjd (returned value).
+ <tt/daynr/ is the day of the years starting with <tt/1/ on January 
+1st and ending with <tt/365/ or <tt/366/ on December 31st.
+
+<sect2>mjd_to_yearday
+<p>
+<tscreen><verb>
+int mjd_to_yearday (double mjd, int *year, int *daynr)
+</verb></tscreen>
+<p> Conversion of <tt/mjd/ to <tt/year/ and <tt/daynr/. 
+<tt/daynr/ is the day of the years starting with <tt/1/ on January 
+1st and ending with <tt/365/ or <tt/366/ on December 31st.
+
+<sect2>dayofyear<em/x/
+<p>
+<tscreen><verb>
+int dayofyear1 (struct ttime *t)
+int dayofyear2 (double mjd)
+</verb></tscreen>
+<p> Both routines return the day of year (1-366). 
+
+<sect2>GMST
+<p>
+<tscreen><verb>
+double GMST (double mjd)
+</verb></tscreen>
+<p>Returns the corresponding GMST (Greenwich Mean Sideral Time) for
+a given mjd. GMST is returned in <tt/hours/.
+
+<sect2>mjdnow
+<p>
+<tscreen><verb>
+double mjdnow()
+</verb></tscreen>
+<p> Corresponds to the system (HW clock) time, converted to mjd.
+
+<sect2>systimenow
+<p>
+<tscreen><verb>
+int systimenow (struct ttime *t)
+</verb></tscreen>
+<p>Corresponds to the system time (HW clock), converted to mjd. Similar to <tt/mjdnow/.
+The struct <tt/ttime/ is filled completely (calendar date and mjd).
+
+<sect2>localtimenow
+<p>
+<tscreen><verb>
+int localtimenow (struct ttime *t)
+</verb></tscreen>
+<p>Corresponds to the system time (system clock), converted to mjd. Similar to <tt/systimenow/.
+In addition, timezone and daylight saving corrections are applied to the system time in
+order to obtain the local time.
+The struct <tt/ttime/ is filled completely (calendar date and mjd).
+
+<sect1> String Conversion of Time
+
+<sect2>strtime<em/x/
+<p>
+<tscreen><verb>
+char * strtime1 (struct ttime *t, int i)
+char * strtime2 (double mjd, int i)
+char * strtime3 (struct ttime *t)
+</verb></tscreen>
+<p><tt/strtime1/ and <tt/strtime2/ return the same string. <tt/strtime1/
+takes a struct <tt/ttime/ whereas <tt/strtime2/ takes <tt/mjd/
+as input. <tt/i/ is the number of digits of the seconds to be printed.
+<p>Example: <tt/strtime2(mjd, 3)/ returns the string 
+<tt/"1998 12 31  23 59 30.546"/
+<p>The return string of <tt/strime3/ ?????
+
+<sect2>readtime<em/x/
+<p>
+<tscreen><verb>
+int    readtime1  (FILE *fpin, struct ttime *t)
+double readtime2  (FILE *fpin)
+</verb></tscreen>
+<p> Both routines <tt/readtime1/ and <tt/readtime2/ read from
+a file a calendar date of the form <tt/year month day hour min sec/
+e.g. (<tt/"1998 12 31  23 59 30.546"/. Years without centuraries 
+e.g (<tt/year = 98/) are converted to a full year (<tt/year = 1998/)
+<tt/readtime1/ fills the information in a struct <tt/ttime/ adding
+mjd. <tt/readtime2/ only returns the corresponding <tt/mjd/.
+
+<sect2>sreadtime<em/x/
+<p>
+<tscreen><verb>
+int    sreadtime1 (const char *instring, struct ttime *t)
+double sreadtime2 (const char *instring);
+</verb></tscreen>
+<p> These routines are similar to the <tt/readtime/ routines. The only
+difference is that instead of reading from a file, they take a string
+as input parameters.
+
+<sect2>secofday
+<p>
+<tscreen><verb>
+double secofday (const char *mjd)
+</verb></tscreen>
+<p>Some curious routine from E.Favey.
+
+
+
+

@@ -1,0 +1,51 @@
+.TH READ_COMMENT 3ggl "1 August 1997" "GGL/IGP ETHZ" "GGL Common Lib"
+.SH NAME
+read_comment \- overread all characters up to a comment specifier
+.SH SYNOPSIS
+.B #include <common/inout.h>
+
+.RB "int " read_comment
+.RI "(FILE *" fpin ", const int " idchar ");"
+.SH DESCRIPTION
+This function reads bytes from a stream specified by
+.I fpin
+until it finds a character identical to
+.I idchar
+or until it reaches end of file.
+The filepointer of
+.I fpin
+will point to the subsequent character of
+.I idchar
+upon return from the function.
+.SH "RETURN VALUES"
+.B read_comment()
+returns an error code of zero, when the character was found.
+.B EOF
+is returned as an error code when
+the end of file
+is reached or any other file reading error occurred.
+.SH ERRORS
+The function will call standard library functions
+that may set
+.IR errno .
+If any called function produces an error, or if
+the end of file is reached, the return value will be
+set to
+.BR EOF .
+.SH CAVEATS
+You have to compile your program using
+.I -lcommon
+as a compiler flag to properly link
+your function to the library.
+.SH AUTHORS
+  (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich:
+.RS
+Etienne Favey <favey@geod.ethz.ch>,
+.RE
+.RS
+Marc Cocard <cocard@geod.ethz.ch>
+.RE
+.SH "SEE ALSO"
+.BR read_option (3ggl),
+.BR getc (3),
+.BR ferror (3)

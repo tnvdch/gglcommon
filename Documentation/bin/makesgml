@@ -1,0 +1,94 @@
+#!/usr/bin/perl -w
+#
+# - Creates for every body file for example <matcal.sgml> a complete
+#   SGML-file <DOCmatcal.sgml> by adding preamble and postamble.
+#
+# - Creates one file DOCcommon.sgml including all body files 
+#   and adding preamble and postamble
+#
+
+# list of all body files (the order defines the order in which 
+# they are integrated in DOCcommon.sgml)
+
+@list = (
+    "errproc"
+   ,"cmdline"
+   ,"parse"
+   ,"window"
+   ,"inout"
+   ,"mat3"
+   ,"quatern"
+   ,"matcalc"
+   ,"gridop"
+   ,"ggl_time"
+   ,"angles"
+   ,"trafo"
+   ,"crdtrans"
+   ,"swiss"
+   ,"chain"
+   ,"intersect"
+   ,"closestpair"
+);
+
+$versionstring="vers.1, ";
+
+$path = "../sgml/";
+$prefix ="DOC";
+
+# name of abstract file which is added.
+$abstract = "comabstract.sgml";
+
+sub copyfile
+{
+    open(TXTFILE, $path . $_[0]) or die "file $path$_[0] not found\n";
+    @txt = <TXTFILE>; 
+    for($i=0;$i < $#txt; $i++) {   # remove comment from body file
+	if (!($txt[$i] =~ /^\#/)) {
+	    print OUT $txt[$i];
+	}
+    }  
+    close TXTFILE;
+}
+
+sub createheader
+{  
+    print OUT "<!doctype linuxdoc system>\n";
+    print OUT "<article>\n";
+    print OUT "<title>GGL libcommon : @_\n";
+    print OUT "<author>M. Cocard (<tt/cocard\@geod.ethz.ch/) and E. Favey (<tt/favey\@geod.ethz.ch/)\n";
+    @now=localtime time;
+    print OUT "<date> $versionstring $now[3]-$now[4]-$now[5]\n" ;
+    copyfile $abstract;
+    print OUT "<toc>\n";
+}
+
+foreach $file (@list) { # creates one separate file per body file
+    $inp =  $path . $file . ".sgml";
+ 
+    if (-e $inp) {
+ 	$out = $path . $prefix . $file . ".sgml";  
+	print "file <$out>\n";
+	open (OUT,">$out"); 
+	createheader;
+	copyfile($inp);
+	print OUT "</article>\n";
+	close OUT;
+    }
+    else { 
+	print "file <$inp> ---- not included\n";
+    }
+}
+
+
+$out=$path . $prefix . "common.sgml"; # creates the global file including all units
+open (OUT,">$out");
+createheader;
+foreach $file (@list) {
+    $inp = $path . $file . ".sgml";
+    if (-e $inp) {
+	copyfile $inp;
+    }
+};
+print OUT "</article>\n";
+close(OUT);
+

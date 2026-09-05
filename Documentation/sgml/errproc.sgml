@@ -1,0 +1,79 @@
+
+<sect>Error Processing (Revision 1.2 -- 04/05/98)
+
+<p> On many unix systems, simple commands report 
+their error messages to standard error;
+this normally is the screen of the calling terminal.
+To keep the messages of different processes apart, each
+process usually prints its own name and a verbose error
+description.
+
+<p>To facilitate the programming of such error messages, <tt/errproc.h/
+provides some variables containing the process' name.
+To initialize those variables, the function <tt/errinit()/
+needs to be called at program startup with <tt/argv[0]/ as
+argument.
+
+<p>These extensions make it possible to write self-contained error-reporting
+subroutines that require no explicit cooperation from <tt/main/.
+
+<p>
+<tscreen><verb>
+ char * program_invocation_name
+</verb></tscreen>
+
+<p>This variable's value is the name that was used to invoke the
+program running in the current process. It is the same as <tt/argv[0]/
+Note that this is not necessarily a useful file name; often it contains
+no directory names.
+
+<p>
+<tscreen><verb>
+ char * program_invocation_short_name
+</verb></tscreen>
+
+<p>This variable's value is the name that was used to invoke the program
+running in the current process, with directory names removed. (That is
+to say, it is the same as <tt/program_invocation_name/ minus everything
+up to the last slash, if any.)
+
+These two variables are set up with the following function:
+
+<sect1>errinit
+<p>
+<tscreen><verb>
+ void errinit {const char *program_name}
+</verb></tscreen>
+
+<p>This function initializes the two variables described above using the string
+that gets passed to it by <tt/program_name/. It is intended to be called as the 
+first function within <tt/main/ passing <tt/argv[0]/ as argument.
+
+<p>These extensions make it possible to write self-contained error-reporting
+subroutines that require no explicit cooperation from <tt/main/.
+
+<p> Here is an example on how to use the features described above in your program:
+
+<tscreen><verb>
+/*
+ *  print an error message
+ */
+if (error == TRUE)
+   fprintf (stderr, "%s : Error in routine 'important'\n",
+            program_invocation_short_name);
+</verb></tscreen>
+
+<p>
+
+<sect1>puterr resp. gputerr
+<p>
+To write an error message to the standard error, to a logfile or to the syslog facility, use the following functions:
+<tscreen><verb>
+void puterr { const char *gglpart, const char *routine)
+
+void gputerr { const char *gglpart, const char *routine)
+</verb></tscreen>
+<p>To the variable <tt/gglpart/, you can hand over the library object,
+to the variable <tt/routine/, you can hand over the funcion
+name. Unterschied MS  
+

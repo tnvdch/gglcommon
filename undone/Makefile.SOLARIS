@@ -1,0 +1,70 @@
+#----------------------------------------------------------------------
+#    Makefile for common_lib (version E. Favey) 
+#----------------------------------------------------------------------
+
+.KEEP_STATE:
+.POSIX:
+
+CC = gcc
+
+CFLAGS += -DOS_LINUX -DWITH_ERRORS -DOS_SOLARIS
+#CFLAGS += -w -DOS_LINUX -DWITH_ERRORS -DOS_SOLARIS
+#CFLAGS += -Xs
+debug := CFLAGS += -g -DWITH_DEBUG
+optimise := CFLAGS += -O
+
+####################################################################
+# You ought not need to edit below this line
+####################################################################
+
+# the name of the final program
+
+MAIN = libcommon
+VERSION = 0.29b
+INCLDIR = ./include
+
+
+OFILES = errproc.o \
+         ggl_time.o \
+	 mat3.o \
+	 matcalc.o \
+	 lmatcalc.o \
+	 imatcalc.o \
+	 swiss.o \
+	 angles.o \
+	 crdtrans.o \
+	 inout.o \
+	 tools.o \
+
+#OFILES = $(CFILES:.c=.o)
+
+all debug optimise : $(MAIN).a.$(VERSION)
+
+LIBS = -lm
+
+$(MAIN).a.$(VERSION): $(OFILES)
+	ar -rc $(MAIN).a.$(VERSION) $(OFILES)
+
+.c.o :
+	$(CC) $(CFLAGS) -I$(INCLDIR) -c $*.c 
+
+#$(PROGRAM): $(OFILES)
+#	cc -o $(PROGRAM) $(OFILES) ${PRIVLIBS} ${LIBS}
+
+# make clean:
+# remove all program and object files
+
+objclean :
+	rm -f $(OFILES)
+
+clean : objclean
+	rm -f $(MAIN).a.$(VERSION)
+
+# make delbak:
+# delete remaining backup files from editors like
+# emacs or textedit
+
+delbak :
+	rm -f *~ *% *.bak
+	rm -f $(INCLDIR)/*~ $(INCLDIR)/*% $(INCLDIR)/*.bak
+

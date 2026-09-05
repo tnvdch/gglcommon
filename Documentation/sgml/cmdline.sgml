@@ -1,0 +1,359 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/cmdline.sgml,v $
+#
+#   $Id: cmdline.sgml,v 1.3 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: cmdline.sgml,v $
+#   Revision 1.3  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.2  1998/07/01 15:17:21  cocard
+#   *** empty log message ***
+#
+#   Revision 1.1  1998/05/29 12:01:18  cocard
+#   Initial revision
+#
+#
+#
+
+<sect> cmdline (Revision 1.4 -- 05/05/98)
+
+<p>The unit <tt/cmdline/ provides functions to ease the use of
+command line parameters in programs based on the Common Library
+
+<sect1>Macros and the Main Option Data Type
+
+<p>The following Macros are defined for use as value to <tt/argtype/
+in the part <ref id="mainoptions" name="mainoptions data structure">
+
+<sect2> macro definitions<label id="macro">
+<p>
+<descrip>
+<tag/ CMDL_CHAR/
+  The pointer passed to <tt/argument/ will be interpreted as <tt/char */.
+  If an argument exists, it is returned as a nullterminated string and
+  its space will be allocated by <tt/process_cmdline_opt/. See also section
+  <ref id="sample" name="Example of Main Program">.
+<tag/ CMDL_INT/
+  The pointer passed to <tt/argument/ will be interpreted as <tt/int/.
+  It may be initialized in advance to a default value.
+<tag/ CMDL_DOUBLE/
+  The pointer passed to <tt/argument/ will be interpreted as <tt/double/.
+  It may be initialized in advance to a default value.
+</descrip>
+
+<sect2> struct mainoptions<label id="mainoptions">
+<p>
+
+This structure is used to hold all the valid program options and
+additional information used by the two routines described in this chapter.
+You must provide either <tt/argument/ or <tt/flag/ or both.
+
+<p>
+<tscreen><verb>
+struct mainoptions {
+	int valid;
+	int optchar;
+	void *argument;
+	int argtype;
+	int *flag;
+	int valseen;
+	char *shortdesc;
+	char *longdesc;
+}
+</verb></tscreen>
+
+
+<p><tt/int valid/.
+A flag for internal checks, you may set this simply to zero.
+
+<p><tt/int optchar/.
+The character of the short option, e.g. 'q' if the option is to be <tt/-q/.
+
+
+<p><tt/void *argument/.
+A pointer where to store the agument passed with the option, 
+NULL means this option will have no argument.
+
+<p><tt/int argtype/.
+The type as which we have to interpret the pointer above.
+This must be of of <tt/CMDL_CHAR/, <tt/CMDL_INT/ or <tt/CMDL_DOUBLE/.
+
+<p><tt/int *flag/.
+Variable to set to <tt/valseen/, when this option is seen.
+Pass NULL if no flag has to be set.
+ 
+<p><tt/int valseen/.
+The value to set <tt/flag/ to when option was seen. Do not forget to initialize
+<tt/flag/ to a value different from <tt/valseen/ before calling the
+processing routine in order see, whether <tt/flag/ has changed.
+
+<p><tt/char *shortdesc/.
+Usage information describing the argument in one word:
+e.g. passing <tt/&dquot; &lt;input_file&gt;&dquot;/ to an option 'i' will result
+in the following help information: <tt/programname [-i &lt;input_file&gt;]/.
+
+<p><tt/char *longdesc/.
+Usage information, verbose help line.
+This string will be echoed to the used, when he calls the
+program with the <tt/-h/ help option:
+ e.g. <tt/&dquot; -i   data input file&dquot;/
+  
+<sect1>Functions to help parse a commandline
+<p>
+
+Prior to calling any of these functions, you must initialize a
+<tt/mainoptions/ data structure and set the numerical default values.
+Refer to section <ref id="sample" name="Example of Main Program">
+to see how to do this.
+
+<sect2>print_usage_info
+<p>
+<tscreen><verb>
+void print_usage_info (const int verb, struct mainoptions o[], const int numelem,
+                       const char *description, const char *nonopt)
+</verb></tscreen>
+<p>
+
+This function prints commandline option information from the <tt/mainoptions/
+data structure to <tt/stderr/. The variable <tt/numelem/ must contain the
+correct number of elements in <tt/mainoptions/. 
+If <tt/verb/ is set zero, the <tt/longdesc/ lines will <bf/not/ be printed.
+
+The string passed with <tt/description/ serves as a short information,
+what this program does. Using the string <tt/nonopt/, you may provide
+usage information about the non option arguments your program will take.
+
+The Information is printed
+in the following format:
+<tscreen><verb>
+programname  ---  description
+
+usage: programname -optchar shortdesc -optchar shortdesc nonopt
+
+longdesc
+longdesc
+</verb></tscreen>
+The program name is taken from the global variable 
+<tt/program_invocation_short_name/ defined in <tt/errproc/.
+
+
+<sect2>process_cmdline_opt
+<p>
+<tscreen><verb>
+int process_cmdline_opt (const int argcount, char **argvect,
+                         struct mainoptions o[], const int numelem,
+                         const char *description, const char *nonopt);
+</verb></tscreen>
+<p>
+This routine parses the arguments in <tt/argvect/ for the options
+in <tt/o/. The variable <tt/numelem/ must contain the
+correct number of elements in <tt/o/. The variable <tt/argcount/
+must contain the correct number of elements in <tt/argvect/.
+
+The string passed with <tt/description/ serves as a short information,
+what this program does. Using the string <tt/nonopt/, you may provide
+usage information about the non option arguments your program will take.
+
+<sect3>Return Values<p>
+<descrip>
+<tag/a positive number/ All values in <tt/argvect/ were successfully parsed.
+The return value is the index of the first non-option value in <tt/argvect/.
+<tag/-1/ There was an unknown option or no argument to an option which
+requires one.
+<tag/-2/ The value <tt/argtype/ in the struct <tt/mainoptions/ contains
+an invalid value. (e.g. one different from those of
+section <ref id="macro" name="macro definitions">).
+<tag/-3/ The option <tt/-h/ for help was found and therefore
+a help message was printed automagically. Any options
+after <tt/-h/ were <bf/not/ looked at.
+</descrip>
+
+<sect3>Errors<p>
+In the case, one of the error conditions described above occured,
+ <tt/process_cmdline_opt/
+will print an error message to <tt/stderr/ using the global variable 
+<tt/program_invocation_short_name/ defined in <tt/errproc/.
+
+
+<sect1>Example of Main Program<label id="sample">
+<p>
+<tscreen><verb>
+/*
+ *      FILE: sample
+ *
+ *   PROJECT: GGL Common Applications
+ *
+ *   PURPOSE: main program sample
+ *
+ * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
+ *                     ETH Zurich
+ *
+ *   AUTHORS: Favey Etienne   (c version)
+ *
+ *   HISTORY: dd-mm-yyyy  --  description
+ *            
+ *            16-01-1998  --  created
+ *
+ *   CAVEATS: Needs the GGL Common Library!
+ *
+ *  Please compile with compiler flags "-lm -lcommon" !
+ */
+
+#define SRC_VERSION 1.00
+#ifndef LIBVER
+#define LIBVER ""
+#endif
+#define COPYRIGHT "(c) 1998 Geodesy and Geodynamics Lab, ETH Zurich"
+
+#include <errno.h>      /*  the allround headers */
+#include <stdlib.h>     /*  the allround headers */
+#include <stdio.h>      /*  crucial for file input and output   */
+#include <ctype.h>      /*  character handling */
+#include <string.h>     /*  string handling */
+#include <math.h>       /*  mathematics */
+
+#include <common.h>     /*  our own institute's headers */
+
+/*
+ *  Print version information to stderr
+ *  You should not need to modify this
+ */
+void display_version()
+{
+        extern char *program_invocation_short_name;
+        fprintf (stderr,
+                 "%s version %3.2f \n  %s\n  %s\n",
+                 program_invocation_short_name, SRC_VERSION, LIBVER, COPYRIGHT);
+        fprintf (stderr,
+                 "  maintainers: E. Favey <favey@geod.ethz.ch>\n\n");
+}
+
+
+/*
+ *  That's where we do the work 
+ */
+int main ( int argc, char **argv)
+{
+        int ind_read;           /* index of first non option argument */
+
+        /* 
+         *  variables to hold arguments from command line parsing
+         *  and default settings for command line options 
+         */
+        int verbose = FALSE;
+        int pr_version = FALSE;
+        int myflag = FALSE;
+        int ivalue = 25;
+        double dvalue = 26.4;
+        char *aname = NULL;
+
+        /* 
+         *  let's define our command line options
+         *  -h is already included in library 
+         */
+        struct mainoptions myopts[] =                   /* from cmdline.h */
+        {
+                /* a flag type entry */
+                {0,'V', NULL, 0, &amp;pr_version, TRUE, "",
+                 "Version string."},
+                /* a flag type entry */
+                {0,'v', NULL, 0, &amp;verbose, TRUE, "", 
+                 "Print information while calculating."},
+                /* a flag type entry */
+                {0,'f', NULL, 0, &amp;myflag, TRUE, "", 
+                 "My special flag that will change things."},
+                /* an integer argument entry */
+                {0,'i', &amp;ivalue, CMDL_INT, NULL, 0, " <ivalue>",
+                 "The ivalue you need for xyz."},
+                /* an double argument entry */
+                {0,'d', &amp;dvalue, CMDL_DOUBLE, NULL, 0, " <dvalue>",
+                 "A floating point argument."},
+                /* an char argument entry */
+                {0,'s', &amp;aname, CMDL_CHAR, NULL, 0, " <your_name>",
+                 "Please pass a string :-)"}
+        };
+        int optcount = (sizeof(myopts)/sizeof(struct mainoptions));
+
+        /*
+         *  Description what the program does
+         */
+        char description[] = "a sample program doing nothing really";
+
+        /*
+         *  Information about our non option arguments
+         */
+        char nonoptarg[] = " <input_filename> [<input_filename> ...]";
+
+        /* 
+         *  proper error cursing with our own command name 
+         */
+        extern char *program_invocation_name;           /* from errproc.h */
+        extern char *program_invocation_short_name;     /* from errproc.h */
+        
+        errinit (argv[0]);                              /* from errproc.h */
+
+        /*
+         * Now we process all command line options
+         */
+        ind_read = process_cmdline_opt (argc, argv, myopts, optcount, 
+                                        description, nonoptarg);
+        /*
+         *  String default values are filled only down here
+         */
+        if (aname == NULL) aname = strdup("weirdname");
+
+        /*
+         *  let's evaluate if the Version flag was set
+         */
+        if (pr_version) { display_version(); return EXIT_SUCCESS; }
+
+        /*
+         *  when we got -3, the user called the -h help command
+         */
+        if (ind_read == -3) return EXIT_SUCCESS;
+
+        /*
+         *  we check if we got an error (ind_read <0) or
+         *  if we got not enough option arguments.
+         *  ind_read points to the first element of non option arguments
+         *  we check that we got at least one of them
+         */
+        if (ind_read < 0 || argc - ind_read < 1) {
+                print_usage_info(FALSE, myopts, optcount, 
+                                 description, nonoptarg);
+                return EXIT_FAILURE;
+        }
+
+        /*
+         *    If the verbose flag was chosen, we show the content
+         *  of our variables.
+         *    At this stage, you could call one of your subroutines
+         *  with the information and let it do the rest.
+         */
+        if (verbose) {
+                int i;
+                fprintf (stdout, "Myflag : %d\n", myflag);
+                fprintf (stdout, "ivalue : %d\n", ivalue);
+                fprintf (stdout, "dvalue : %12.8f\n", dvalue);
+                fprintf (stdout, "aname  : %s\n", aname);
+                fprintf (stdout, "non option arguments :");
+                for (i=ind_read; i<argc; i++)
+                        fprintf (stdout, " %s", argv[i]);
+                fprintf (stdout, "\n");
+        }
+
+
+        /* 
+         *  clean exit upon completion of tasks
+         */
+        return EXIT_SUCCESS;
+}
+</verb></tscreen>
+
+
+

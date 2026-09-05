@@ -1,0 +1,335 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/inout.sgml,v $
+#
+#   $Id: inout.sgml,v 1.5 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: inout.sgml,v $
+#   Revision 1.5  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.4  1999/06/21 12:47:56  favey
+#   changed funcionality of get_fname_wopath
+#
+#   Revision 1.3  1998/07/21 15:23:49  favey
+#   added doc for overread_comment
+#
+#   Revision 1.2  1998/07/17 16:23:50  favey
+#   inout documented
+#
+#   Revision 1.1  1998/05/29 12:02:35  cocard
+#   Initial revision
+#
+#
+#
+
+<sect> inout (Revision 1.6 -- 16/07/1998)
+<p>
+<sect1> File Handling Routines
+<p>
+<sect2>open_text_file, open_binary_file
+<p>
+<tscreen><verb>
+FILE * open_text_file (const char *fname, const char *mode)
+FILE * open_binary_file (const char *fname, const char *mode)
+</verb></tscreen>
+Open a text file for operations in the <tt/mode/ specified.
+On Linux systems, those two functions behave identically.
+They have mainly been introduced for porting reasons, so the
+main programs using the library functions do not have to be altered.
+In addition to the operations performed by
+fopen(3), these functions will print an error message, when a file could not
+be opened properly.
+
+The parameter <tt/mode/ may be one of the following strings:
+<descrip>
+<tag/&dquot;r&dquot;/ for reading,
+<tag/&dquot;w&dquot;/ for writing,
+<tag/&dquot;w+&dquot;/ for appending,
+<tag/&dquot;r+&dquot;/ for reading and writing,
+</descrip>
+or any other mode accepted by fopen(3).
+
+The functions return a pointer to the stream of the file <tt/fname/
+in the case it could be opened in the desired <tt/mode/.
+If an error occurred while
+opening the file, these functions will return a <bf/NULL/ pointer.
+
+<sect2>erase_file
+<p>
+<tscreen><verb>
+int erase_file (const char *filename)
+</verb></tscreen>
+This function erases the file <tt/filename/ when it exists. It is
+an extension to unlink(2) by additionally printing a proper error message, 
+when a file could not be removed or be found. It will return the 
+error code, that it received by calling unlink(2).
+
+<sect2>iscomment
+<p>
+<tscreen><verb>
+int iscomment (const char *line)
+</verb></tscreen>
+This function returns 1, if the line <tt/*line/ is a comment,
+i.e. if the line starts with a '#' or is all blank. If not, the return
+value is 0.
+
+<sect2>openzipped
+<p>
+<tscreen><verb>
+FILE *openzipped (const char *fname, int *ispipe)
+</verb></tscreen>
+This function checks, whether the file *fp is a zipped file by looking at its magic *fp, it must already be open for reading!
+If the file is zipped, the function closes it, and a pipe on the
+unzipped file is passed back. If the file is unzipped, the filepointer
+is left untouched.
+Return values: TRUE if zipped, FALSE if unzipped, EOF on error
+
+<sect1> Read Operations
+<p>
+<sect2>read_comment
+<p>
+<tscreen><verb>
+int read_comment (FILE *fpin, const int idchar)
+</verb></tscreen>
+Overread all characters up to a comment specifier.
+<p>This function reads bytes from a stream specified by <tt/fpin/
+until it finds a character identical to <tt/idchar/
+or until it reaches end of file.
+The filepointer of <tt/fpin/ will point to the subsequent character of
+<tt/idchar/ upon return from the function.
+
+<bf/read_comment/ returns an error code of zero, when the character was found.
+<bf/EOF/ is returned as an error code when the end of file
+is reached or any other file reading error occurred.
+
+<sect2>overread_comment
+<p>
+<tscreen><verb>
+int overread_comment (FILE *fpin, FILE *fpout, const int commentchar)
+</verb></tscreen>
+Overread comment lines, assuming next char read is first of a line.
+<p>This function reads entire lines from a stream specified by <tt/fpin/
+until it finds a not beginning with a character identical to <tt/commentchar/
+or until it reaches end of file.
+The filepointer of <tt/fpin/ will point to the first character of
+a line not beginning with <tt/commentchar/ upon return from the function.
+
+If <tt/fpout/ is not a <bf/NULL/ pointer, the skipped comment lines will be
+output to that stream, otherwise they are silently discarded.
+
+<bf/overread_comment/ returns an error code of zero upon success.
+<bf/EOF/ is returned as an error code when the end of file
+is reached or any other file reading error occurred.
+
+<sect2>read_option
+<p>
+<tscreen><verb>
+char * read_option (FILE *fpin, const int idchar)
+</verb></tscreen>
+Read option entry following a specific character.
+<p>This function reads bytes from a stream specified by <tt/fpin/
+until it finds a character identical to <tt/idchar/ 
+or until it reaches end of file.
+
+With <bf/read_option/ the remainder of the current line, starting with
+the character following the <tt/idchar/  up to and including the newline 
+character is stored into a newly allocated string.
+
+<bf/read_option/ returns a pointer to this newly allocated string containing
+the option information, unless an error occurred while
+reading from the file. In case of an error or upon reaching
+the end of file, it returns a <bf/NULL/ pointer.
+
+<sect2>read_soption
+<p>
+<tscreen><verb>
+char * read_soption (FILE *fpin, const int idchar)
+</verb></tscreen>
+Read string option entry following a specific character.
+<p>This function reads bytes from a stream specified by <tt/fpin/
+until it finds a character identical to <tt/idchar/ 
+or until it reaches end of file.
+
+With <bf/read_soption/, only one string is returned as with the `&percnt;s' template
+when using sscanf(3).
+
+All preceeding white space will be overread, and
+the string will be read up to a following white space
+character. The returned string will not contain any of the
+white space characters. Any subsequent strings or characters
+following until the end of line will be dropped. 
+
+<bf/read_soption/ returns a pointer to this newly allocated string containing
+the option information, unless an error occurred while
+reading from the file. In case of an error or upon reaching
+the end of file, it returns a <bf/NULL/ pointer. It will 
+also return a null pointer, when no string could be found following the
+<tt/idchar/.
+
+The function <bf/read_soption/ was primarily introduced to quickly read 
+filenames as option contents from an input file. The return
+value may thus easily be checked for the existence of such
+an item.
+
+<sect2>read_line_static
+<p>
+<tscreen><verb>
+int read_line_static (FILE *fpin, char *s, const int size)
+</verb></tscreen>
+       This function  reads  in at most one less than <tt/size/ 
+       characters from
+       <tt/fpin/ and stores them into the buffer pointed  to  by  <tt/s/.
+       Reading  stops after an EOF or a newline.  If a newline is
+       read, it is stored into the  buffer.   A  '&bsol;0'  is  stored
+       after the last character in the buffer.
+
+The buffer must be previously allocated to hold at least <tt/size/
+characters.
+
+The return value is the length of the string read from the file, or
+<bf/EOF/ on error or when an end of file occurs while no characters
+have been read.
+
+<sect2>read_line
+<p>
+<tscreen><verb>
+int read_line (FILE *fpin, char **lineptr)
+</verb></tscreen>
+<bf/The use of this function is deprecated!/ It will be removed in
+the future. Use <it/read_line_static/ instead.
+<p>This function reads bytes from a stream specified by <tt/fpin/
+until it finds a newline character or until it reaches end of file.
+The pointer to the newly allocated string of read characters including 
+the newline character
+is stored into the location passed by <tt/lineptr/.
+
+The function returns the size of newly allocated string or an <bf/EOF/,
+when the end of file was reached or an error occurred.
+
+<sect2>read_delim<p>
+<tscreen><verb>
+int read_delim (FILE *fpin, int delimiter, char **lineptr)
+</verb></tscreen>
+This function reads the current line of <tt/*fpin/ up to a
+<tt/delimiter/. The result is returned in <tt/*lineptr/.
+
+<sect1>String Operations (e.g. for filenames)
+<p>
+<sect2>remove_extension
+<p>
+<tscreen><verb>
+void remove_extension (char *filename)
+</verb></tscreen>
+This function will truncate the string <tt/filename/
+by replacing the last dot in the string by a zero character.
+The string passed to this function will be modified!
+
+<sect2>get_extension
+<p>
+<tscreen><verb>
+char * get_extension (const char *filename)
+</verb></tscreen>
+This function returns a pointer to a newly allocated string containing the
+extension including the leading dot. The string <tt/filename/
+that it is passed as an argument will not be altered!
+The return value is a pointer to a newly allocated string containing the
+extension including the leading dot.
+When no extension was present in <tt/filename/, this function will return a
+<bf/NULL/ pointer.
+
+<sect2>add_extension
+<p>
+<tscreen><verb>
+char * add_extension (const char *oldname, const char *ext)
+</verb></tscreen>
+This function returns a pointer to a newly allocated string containing the
+filename with a new extension.
+
+<sect2>get_fname_wopath
+<p>
+<tscreen><verb>
+char * get_fname_wopath (const char *filename)
+</verb></tscreen>
+This function returns a new allocated string
+containing the filename excluding the leading path.
+If <tt/filename/ does not contain a leading path, the function
+returns a newly allocated string with a copy of <tt/filename/.
+
+<sect2>strpos_withblanks
+<p>
+<tscreen><verb>
+int strpos_withblanks(const char *s, const int count)
+</verb></tscreen>
+This function parses the string <tt/s/ from the position <tt/count/ backwards
+until it finds a non-space character. It returns the position of the
+first whitespace character as defined by isspace(3).
+
+For use with returned int of &percnt;n on sscanf(3).
+
+<sect2>uppercase
+<p>
+<tscreen><verb>
+void uppercase (char *s)
+</verb></tscreen>
+This function replaces every lowercase character in <tt/s/ into
+its uppercase counterpart. This function will fail, if the string is
+not null terminated. The string <tt/s/ will be modified.
+
+<sect2>lowercase
+<p>
+<tscreen><verb>
+void lowercase (char *s)
+</verb></tscreen>
+This function replaces every uppercase character in <tt/s/ into
+its lowercase counterpart. This function will fail, if the string is
+not null terminated. The string <tt/s/ will be modified.
+
+<sect2>replacechar
+<p>
+<tscreen><verb>
+void replacechar (char *s, int oldc, int newc)
+</verb></tscreen>
+This function replaces every <tt/oldc/ character in <tt/s/ into
+a <tt/newc/ character. This function will fail, if the string is
+not null terminated. The string <tt/s/ will be modified.
+
+<sect2>extract_values/extract_values_static
+<p>
+<tscreen><verb>
+int extract_values (const char *line, char **prefix,
+		    const unsigned int prefix_size, 
+		    stuct coordcol *infix, char **suffix,
+		    const unsigned long linecount)
+</verb></tscreen>
+<p>
+This funcion extracts columns from an input line <tt/*line/ and stores
+them in <tt/*infix/. <tt/Prefix_size/ characters, counted from the
+beginning of the line, are stored in <tt/**prefix/. The variable
+<tt/linecount/ is not changed or increased in this function. If the extraction was successfull, the return value is 0.
+<tscreen><verb>
+int extract_values_static (const char *line, char [prefix],
+		    const int prefix_size, 
+		    stuct scoordcol *infix, char [suffix],
+		    const int max_suffix_size, const unsigned long linecount)
+</verb></tscreen>
+This function extracts columns from an input line <tt/*line/ and stores them in
+<tt/*infix/. <tt/Prefix_size/ characters, counted from the beginning
+of the line, are stored in <tt/prefix/, <tt/max_suffix_size/
+characters, counted from the end of the line, in <tt/suffix/. The variable
+<tt/linecount/ is not changed or increased in this function. If the
+extraction was successful, the return value is 0. The static version
+of this function is for faster processing without new memory allocation.
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,14 @@
+co_sgml :
+	$(MAKE) -C sgml co
+
+coro_sgml :
+	$(MAKE) -C sgml coro
+
+ci_sgml :
+	$(MAKE) -C sgml ci
+
+co : co_doc co_sgml
+
+coro : coro_doc coro_sgml
+
+ci : ci_doc ci_sgml

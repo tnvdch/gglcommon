@@ -1,0 +1,133 @@
+#
+# Makefile for development software.
+#
+
+CC = gcc
+LIBS = -lm 
+# if using netcdf don't forget -lnetcdf
+#DEFS = -DWITH_DEBUG
+DEFS = -DWITH_DEBUG -DOS_LINUX -DWITH_ERRORS
+OPTDEFS = -DOS_LINUX -DWITH_ERRORS
+CFLAGS = -g -Wall
+OPTFLAGS = -O -i486
+#DEFS = $(OPTDEFS)
+#CFLAGS = $(OPTFLAGS)
+
+
+INSTROOT = /usr
+INSTBIN = $(INSTROOT)/bin
+INSTDIR = $(INSTROOT)/lib
+#INSTMOD = 755
+INSTINCL = $(INSTROOT)/include/common
+
+####################################################################
+# You ought not need to edit below this line
+####################################################################
+
+# the name of the final program
+
+PLATFORM = i386
+MAIN = libcommon
+VERSION = 1.0
+COMMONDIR = .
+INCLDIR = $(COMMONDIR)/include
+SRCDIR = $(COMMONDIR)/src
+OBJDIR = $(COMMONDIR)/obj-$(PLATFORM)
+BINDIR = $(COMMONDIR)/bin
+
+# List all the object files that contain declarations
+
+HDRS = $(INCLDIR)/errproc.h \
+       $(INCLDIR)/matcalc.h \
+       $(INCLDIR)/lmatcalc.h \
+       $(INCLDIR)/imatcalc.h \
+       $(INCLDIR)/mat3.h \
+       $(INCLDIR)/ggl_time.h \
+       $(INCLDIR)/trafo.h \
+       $(INCLDIR)/swiss.h \
+       $(INCLDIR)/crdtrans.h \
+       $(INCLDIR)/quatern.h \
+       $(INCLDIR)/inout.h \
+       $(INCLDIR)/tools.h \
+       $(INCLDIR)/gridop.h \
+       $(INCLDIR)/common.h \
+
+SUBOBJ = errproc.o \
+      ggl_time.o \
+      mat3.o \
+      matcalc.o \
+      lmatcalc.o \
+      imatcalc.o \
+      trafo.o \
+      swiss.o \
+      angles.o \
+      crdtrans.o \
+      quatern.o \
+      inout.o \
+      parse.o \
+      tools.o \
+      gridop.o \
+
+
+#
+# now do the job
+#
+
+all debug : $(MAIN).a.$(VERSION)
+
+shared : $(MAIN).so.$(VERSION)
+
+$(MAIN).a.$(VERSION) : $(SUBOBJ)
+	ar -rc $(MAIN).a.$(VERSION) $(SUBOBJ)
+
+$(MAIN)_o.a.$(VERSION) : $(SUBOBJ)
+	ar -rc $(MAIN)_o.a.$(VERSION) $(SUBOBJ)
+
+$(MAIN).so.$(VERSION) : $(SUBOBJ)
+	$(CC) -shared -o $(MAIN).so.$(VERSION) $(SUBOBJ) $(LIBS)
+
+.c.o : $(HDRS)
+	$(CC) $(DEFS) $(CFLAGS) -I$(INCLDIR) -c $*.c 
+
+#$(BIN1) : $(SUBOBJ) $(BIN1).o
+#	$(CC) -o $(BIN1) $(SUBOBJ) $(BIN1).o $(LIBS)
+#
+#$(BIN2) : $(SUBOBJ) $(BIN2).o
+#	$(CC) -o $(BIN2) $(SUBOBJ) $(BIN2).o $(LIBS)
+
+testmain: testmain.o $(SUBOBJ)
+	gcc -o testmain testmain.o $(SUBOBJ) $(LIBS)
+
+testmain.o : testmain.c
+	gcc -I$(INCLDIR) -g -c testmain.c
+
+allanew : clean delbak all
+
+# make clean:
+# remove all program and object files
+
+objclean :
+	rm -f $(SUBOBJ)
+
+clean : objclean
+	rm -f $(MAIN).a.$(VERSION)
+	rm -f $(MAIN).so.$(VERSION)
+
+# make delbak:
+# delete remaining backup files from editors like
+# emacs or textedit
+
+delbak :
+	rm -f *~ *% *.bak
+	rm -f $(INCLDIR)/*~ $(INCLDIR)/*% $(INCLDIR)/*.bak
+
+install: all shared
+	cp $(MAIN).a.$(VERSION) $(INSTDIR)/$(MAIN).a
+	cp $(MAIN).so.$(VERSION) $(INSTDIR)
+	cp $(HDRS) $(INSTINCL)
+#	chmod $(INSTMOD) $(INSTDIR)/$(MAIN).a.$(VERSION)
+	ln -sf $(MAIN).so.$(VERSION) $(INSTDIR)/$(MAIN).so
+#	cp $(BIN1) $(INSTBIN)
+#	cp $(BIN2) $(INSTBIN)
+
+optimize optimise : objclean $(MAIN)_o.a.$(VERSION)

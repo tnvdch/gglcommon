@@ -1,0 +1,105 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/quatern.sgml,v $
+#
+#   $Id: quatern.sgml,v 1.1 1998/09/09 08:52:26 cocard Exp $
+#
+#   $Log: quatern.sgml,v $
+#   Revision 1.1  1998/09/09 08:52:26  cocard
+#   Initial revision
+#
+#   Revision 1.1  1998/09/09 08:49:33  cocard
+#   Initial revision
+#
+#   Revision 1.1  1998/05/29 12:03:24  cocard
+#   Initial revision
+#
+#
+#
+
+<sect>quatern (Revision 1.1 -- 22/04/1998)
+
+<p> The unit <tt/quatern/ regroups routines for rotations
+based on quaternions.
+
+<sect1> Routines
+<p>
+<sect2>q_add
+<p>
+<tscreen><verb>
+int q_add (const double q1[4], const double q2[4], double result[4])
+</verb></tscreen>
+<p> Addition of two quaternions : <tt/result = q1 + q2/
+
+
+<sect2>q_mult
+<p>
+<tscreen><verb>
+int q_mult (const double q1[4], const double q2[4], double result[4])
+</verb></tscreen>
+<p> Multiplication of two quaternions: <tt/result = q1 * q2/
+
+<sect2>q_conjugate
+<p>
+<tscreen><verb>
+int q_conjugate (const double q[4], double result[4])
+</verb></tscreen>
+<p> Conjugate of quaternion <tt/q/ written to quaternion <tt/result/.
+
+<sect2>q_scalarmult
+<p>
+<tscreen><verb>
+int q_scalarmult (const double q[4], const double factor, double result[4])
+</verb></tscreen>
+<p> Multipilcation of quaternion <tt/q/ with a scalar <tt/factor/. (<tt/result = factor * q/)
+
+<sect2>q_norm
+<p>
+<tscreen><verb>
+double q_norm (const double q[4])
+</verb></tscreen>
+<p> Returns the norm of the quaternion <tt/q/.
+
+<sect2>q_inverse
+<p>
+<tscreen><verb>
+int q_inverse (const double q[4], double result[4])
+</verb></tscreen>
+<p> Inversion of quaternion <tt/q/. 
+
+<sect2>rotmat_to_quat
+<p>
+<tscreen><verb>
+int rotmat_to_quat (const double rotmat[3][3], double result[4])
+</verb></tscreen>
+<p> Conversion of a rotation matrix <tt/rotmat/ to a quaternion <tt/q/. 
+
+<sect2>rotvec_to_quat
+<p>
+<tscreen><verb>
+int rotvec_to_quat (const double rotvec[3], const double rotangle, double result[4])
+</verb></tscreen>
+<p> Converts a rotation given by its rotation axis <tt/rotvec/
+ and the associated rotation angle <tt/rotangle/ (in radians) to the
+corresponding quaternion <tt/q/. <tt/rotvec/ must be a unit
+vector and <tt/angle/ is given in radians.
+
+<sect2>quat_to_rotmat
+<p>
+<tscreen><verb>
+int quat_to_rotmat (const double q[4], double result[3][3])
+</verb></tscreen>
+<p> Conversion of the quaternion <tt/q/ to the corresponding rotation matrix <tt/result/.
+(Counterpart to <tt/rotmat_to_quat/).
+
+<sect2>q_rotate
+<p>
+<tscreen><verb>
+int q_rotate (const double x[3], const double q[4], double result[3])
+</verb></tscreen>
+<p> This function performs a rotation of the vector <tt/x/
+ using a quaternion <tt/q/. The rotated vector is <tt/result/.
+

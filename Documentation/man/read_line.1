@@ -1,0 +1,83 @@
+.TH READ_LINE 3ggl "9 August 1997" "GGL/IGP ETHZ" "GGL Common Lib"
+.SH NAME
+read_line, read_delim \- read an array of char upto a newline or delimiter
+.SH SYNOPSIS
+.B #include <common/inout.h>
+
+.RB "int " read_line
+.RI "(FILE *" fpin ", char **" lineptr ");"
+
+.RB "int " read_delim
+.RI "(FILE *" fpin ", int " delimiter ", char **" lineptr ");"
+.SH DESCRIPTION
+The function 
+.B read_delim()
+reads bytes from a stream specified by
+.I fpin
+until it finds a character identical to
+.I delimiter
+or until it reaches end of file.
+The function
+.B read_line()
+assumes the delimiter to be a newline character and thus, no
+.I delimiter
+argument may be passed to it.
+The pointer to the newly allocated string of read characters
+is stored into the location passed by
+.IR lineptr .
+
+When using
+.B read_line()
+the current line
+up to and including the newline character is stored
+into a newly allocated string.
+
+With
+.BR read_delim() ,
+the current line
+up to and including the 
+.I delimiter
+character is stored
+into a newly allocated string.
+.SH "RETURN VALUES"
+.BR read_delim() " and " read_line()
+return the size of this newly allocated string containing
+the read information, unless an error occurred while
+reading from the file. In case of an error or upon reaching
+the end of file,
+.BR read_delim() " and " read_line()
+return
+.BR EOF .
+
+The pointer to the newly allocated string is stored into the
+location passed by
+.IR lineptr .
+.SH ERRORS
+The functions will call standard library functions
+that may set
+.IR errno .
+If any called function produces an error, or if
+the end of file is reached, the return value will be
+set to
+.BR EOF .
+.SH BUGS
+The Solaris version of read_delim is only a quick workaround
+that does not behave as described above. This is because
+the GNU extension `getdelim' is not avaliable on that platform.
+Somebody want to code it out platform independently?
+.SH CAVEATS
+You have to compile your program using
+.I -lcommon
+as a compiler flag to properly link
+your function to the library.
+.SH AUTHORS
+  (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich:
+.RS
+Etienne Favey <favey@geod.ethz.ch>,
+.RE
+.RS
+Marc Cocard <cocard@geod.ethz.ch>
+.RE
+.SH "SEE ALSO"
+.BR read_comment (3ggl),
+.BR read_option (3ggl)

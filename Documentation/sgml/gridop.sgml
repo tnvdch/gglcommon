@@ -1,0 +1,312 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/gridop.sgml,v $
+#
+#   $Id: gridop.sgml,v 1.7 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: gridop.sgml,v $
+#   Revision 1.7  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.6  1999/05/20 17:18:17  cocard
+#   completely rewritten according to new version
+#
+#   Revision 1.5  1998/09/09 12:21:18  cocard
+#   *** empty log message ***
+#
+#   Revision 1.4  1998/07/21 13:26:35  favey
+#   *** empty log message ***
+#
+#   Revision 1.3  1998/07/21 13:25:51  favey
+#   adapted documentation of g_intersect_vector
+#
+#   Revision 1.2  1998/07/20 15:08:03  favey
+#   *** empty log message ***
+#
+#   Revision 1.1  1998/05/29 12:02:26  cocard
+#   Initial revision
+#
+#
+#
+
+<sect>gridop (Revision 1.10 20/05/1999)
+<p>
+<sect1>Type definition of GGL_grid
+<p>
+
+<sect2>Macro SURFER_MASK
+<p>
+<tscreen><verb>
+ #define SURFERMASK (1.70141e38)
+ #define SURFERMASK_STR " 1.70141e38"
+</verb></tscreen>
+This value is used in Surfer Grids say, that there is no valid data.
+
+<sect2>struct Grid
+<p>
+<tscreen><verb>
+struct GGL_grid {
+  char *grdfilename;      /* name of grid file */
+  FILE *fp;               /* file pointer to gridfile */
+  char *id;               /* identification string */
+  long int nx, ny;        /* number of columns and rows */
+  double xmin, xmax;      /* x-range */
+  double ymin, ymax;      /* y-range */
+  double zmin, zmax;      /* z-range */
+  double dx, dy;          /* spacing in x and y direction */
+  
+  double offset, scale;   /* zvalue = offset + data*scale */
+  double mask;            /* mask value */
+
+  char datatype;          /* u = unsigned char */
+                          /* c = char */
+                          /* d = unsigned short int */
+                          /* i = short int */
+                          /* f = float */
+                          /* e = double */      
+
+  unsigned char datasize; /* size of corresponding datatype */
+  long int d_offset;      /* offset to first element */
+  long int d_row;         /* length of row */
+  void *data;             /* pointer to data buffer */
+}
+</verb></tscreen>
+The structure <tt/Grid/ contains header information and
+either a pointer to the grid data stored in the internal 
+memory <tt/data/ or a file pointer to an external raster
+file. If not specified differently function returning
+an integer, return 0 on successful completion.
+<p>
+
+<sect1> General Grid Operations
+<p>
+
+<sect2>g_init0
+<p>
+<tscreen><verb>
+struct Grid * g_init0()
+</verb></tscreen>
+<p> initialize basic griddata structure without memory allocation for data 
+
+<sect2>g_getmem4data
+<p>
+<tscreen><verb>
+void * g_getmem4data(struct Grid * g)
+</verb></tscreen>
+<p> initialize memory for griddata depending on datatype. 
+The necessary information is taken from the header info
+of the grid itself. 
+
+<sect2>g_free
+<p>
+<tscreen><verb>
+void g_free(struct Grid * g)
+</verb></tscreen>
+frees the allocated memory.
+
+<sect2>g_index
+<p>
+<tscreen><verb>
+long int g_index(struct Grid *g, const long int ix, const long int iy)
+</verb></tscreen>
+<p> returns offset in bytes for grid point (ix, iy)  
+
+<sect2>g_printinfo
+<p>
+<tscreen><verb>
+void g_printinfo(FILE *fp, struct Grid *g)
+</verb></tscreen>
+<p> writes grid info to file (especially useful for debugging purposes)
+
+<sect2>g_scalelimits
+<p>
+<tscreen><verb>
+void g_scalelimits(struct Grid *g, double xscale, double yscale)
+</verb></tscreen>
+<p> scales limits <tt/xmin xmax dx/ by a factor <tt/xscale/ 
+and  <tt/ymin ymax dy/ by a factor of <tt/yscale/.
+
+
+<sect2>g_getval, get_value, g_putval, g_putvalue
+<p>
+<tscreen><verb>
+double g_getval  (struct Grid *g, long int offset)
+int    g_putval  (struct Grid *g, long int offset, const double val);
+double g_getvalue(struct Grid *g, const long int ix, const long int iy)
+int    g_putvalue(struct Grid *g, const long int ix, const long int iy, const double v);
+</verb></tscreen>
+<p> <tt/get/ returns the value as a double. <tt/put/ puts the value <tt/v/.
+<p>
+Note: <tt/getvalue(g,i,j) == getval(g, g_index(g,i,j))/
+
+<sect2>g_minmax
+<p>
+<tscreen><verb>
+void g_minmax(struct Grid *g)
+</verb></tscreen>
+<p> updates <tt/zmin/ and <tt/zmax/ based on the actual griddata.
+
+<sect2>g_getcorner
+<p>
+<tscreen><verb>
+int g_getcorner(struct Grid *g, const double x, const double y, 
+                double z[4], double * x0, double *y0)
+</verb></tscreen>
+<p> returns the 4 corner values <tt/z/ surrounding the point <tt/P(x,y)/.
+In addition the coordinates <tt/x0/ and <tt/y0/ of the lower left corner (P0)
+are returned. The ordering of the points is defined by:
+<verb>
+     y
+     |
+     P3 - P2
+     |  P |
+     P0 - P1  -> x
+</verb>
+
+
+<sect2>g_getpoint
+<p>
+<tscreen><verb>
+int g_getpoint (struct Grid *g, const long int ix, const long int iy, double xyz[3])
+</verb></tscreen>
+<p>returns  a vector xyz[3] with x-, y-, and z-values from grid at position (ix,iy).
+
+<sect2>g_inter_simple
+<p>
+<tscreen><verb>
+int g_inter_simple (struct Grid *g, const double x, const double y, double *zvalue)
+</verb></tscreen>
+<p>  returns interpolated value <tt/zvalue/ for point with coordinates <tt/(x, y)/ 
+calculated from the weighted average over the 4 corner points (weight = 1/sqr(distance)).
+
+<sect2>g_inter_bilinear 
+<p>
+<tscreen><verb>
+int g_inter_bilinear (struct Grid *g, const double x, const double y, double *zvalue)
+</verb></tscreen>
+<p> returns interpolated value <tt/zvalue/ for point with coordinates <tt/(x, y)/ 
+calculated from a bilinear interpolation.
+
+<sect2>next_substring
+<p>
+<tscreen><verb>
+char * next_substring (char *line, int *n)
+</verb></tscreen>
+<p>
+This function returns a pointer to the start of next substring and
+its length in *n. The substring can be delimited either by Space, " or \.
+
+###### GMT operations ######
+
+<sect1>Operations on GMT rasterfiles
+<p> The following 2 environments variables are used : 
+<p>
+<tt/GRIDDIR/ = path to directory with rasterfiles.<newline>
+(example.:/mnt/molnya/linux/gmt3.0/grids).
+<p><tt/RASTERINFO/ = filename of GMT info file concerning rasters.<newline>
+(example :/mnt/molnya/linux/gmt3.0/grids/grdraster.info)
+
+<sect2> R_option, I_option
+<p>
+<tscreen><verb>
+int R_option( char * s, double *xmin, double *xmax, double *ymin, double *ymax)
+int I_option( char * s, double *dx, double *dy);
+</verb></tscreen>
+<p>decodes a R-option or I-option string resp. Example: -R0/360/-90/90 -I15m.
+
+
+<sect2>gmt_rasterinfo
+<p>
+<tscreen><verb>
+struct Grid * gmt_rasterinfo(int grdnr)
+</verb></tscreen>
+<p> opens RASTERINFO, initializes new grid, reads info corresponding to grid with number
+<tt/grdnr/ (See also GMT-Documentation). No data allocation, no file opening. 
+<newline> (Note pixel registration is converted to grid registration by
+modification  
+of <tt/xmin, xmax, ymin, ymax/.)
+
+<sect2>gmt_openrasterfile, gmt_closerasterfile
+<p>
+<tscreen><verb>
+int  gmt_openrasterfile(struct Grid *g)
+void gmt_closerasterfile(struct Grid *g)
+</verb></tscreen> opening/closing rasterfile
+<p> 
+
+<sect2>gmt_readgrid
+<p>
+<tscreen><verb>
+gmt_readgrid(struct Grid *g)
+</verb></tscreen>
+<p>get memory for data and read whole raster data from file 
+
+
+<sect2>gmt_readsubgrid
+<p>
+<tscreen><verb>
+struct Grid * gmt_readsubgrid (struct Grid *oldgrid, 
+                               double xmin, double xmax, double ymin, double ymax)
+</verb></tscreen>
+<p> initialize subgrid and read data from file or copy from old grid, if already read.
+
+<sect2>gmt_writegrid
+<p>
+<tscreen><verb>
+int gmt_writegrid (const char *grdfn, struct Grid *g,
+		   const char *unit, const int verbose)
+</verb></tscreen>
+<p>This function writes GMT grid to file (uses xyz2grd of GMT).
+
+<sect2>Examples
+<p> Example in which data remains external (not read into internal memory).
+<tscreen><verb>
+struct Grid *g;
+{
+   if ((g = gmt_rasterinfo(58) == NULL) return -1;
+   gmt_openrasterfile(g);          # just open the file
+        ...
+   g_intersimple(g, 8, 45, z);     # routine reads the 4 required data points from file
+         ...
+   gmt_closerasterfile(g);         # close file 
+   g_free(g);
+}
+</verb></tscreen>
+
+<p> Example in which data are read into the internal memory.
+<tscreen><verb>
+struct Grid *g;
+{
+   if ((g = gmt_rasterinfo(58) == NULL) return -1;
+   gmt_readgrid(g);               # open file, reads entire grid, close file
+       ...
+   g_intersimple(g, 8, 45, z);    # routine takes the 4 required values from grid
+         ...
+   g_free(g);
+}
+</verb></tscreen>
+
+###### SURFER operations ######
+<sect1>Operations on Surfer gridfiles
+<p>
+
+<sect2>surf_readgrid
+<p>
+<tscreen><verb>
+struct Grid *surf_readgrid(const char *grdfname)
+</verb></tscreen>
+<p> read surfer grid file ASCII. Grid is initialized in routine, Data buffer
+is initialized and read. 
+
+
+<sect2>surf_writegrid
+<p>
+<tscreen><verb>
+int surf_writegrid(const char *grdfname, struct Grid *g, const char *format)
+</verb></tscreen>
+<p>write surfer grid to file ASCII (example of <tt/format/: "10.3lf") 
+
+

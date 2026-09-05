@@ -1,0 +1,86 @@
+.TH READ_OPTION 3ggl "1 August 1997" "GGL/IGP ETHZ" "GGL Common Lib"
+.SH NAME
+read_option, read_soption \- read option entry following a specific character
+.SH SYNOPSIS
+.B #include <common/inout.h>
+
+.RB "char * " read_option
+.RI "(FILE *" fpin ", const int " idchar ");"
+
+.RB "char * " read_soption
+.RI "(FILE *" fpin ", const int " idchar ");"
+.SH DESCRIPTION
+These functions read bytes from a stream specified by
+.I fpin
+until it finds a character identical to
+.I idchar
+or until it reaches end of file.
+
+When using
+.B read_option()
+The remainder of the current line, starting with
+the character following the
+.I idchar
+up to and including the newline character is stored
+into a newly allocated string.
+
+With
+.BR read_soption() ,
+only one string is returned as with the `%s' template
+when using sscanf(3).
+All preceeding white space will be overread, and
+the string will be read up to a following white space
+character. The returned string will not contain any of the
+white space characters. Any subsequent strings or characters
+following until the end of line will be dropped. 
+.SH "RETURN VALUES"
+.BR read_option() " and " read_soption()
+return a pointer to this newly allocated string containing
+the option information, unless an error occurred while
+reading from the file. In case of an error or upon reaching
+the end of file,
+.BR read_option() " and " read_soption()
+return a
+.B NULL
+pointer.
+
+.B read_soption()
+will also return a null pointer, when no string could
+be found following the
+.IR idchar .
+This could be the case when there are only white space
+characters as returned by isspace(3) following the
+.IR idchar .
+
+The function
+.B read_soption()
+was primarily introduced to quickly read filenames
+as option contents from an input file. The return
+value may thus easily be checked for the existence of such
+an item.
+.SH ERRORS
+The function will call standard library functions
+that may set
+.IR errno .
+If any called function produces an error, or if
+the end of file is reached, the return value will be
+set to
+.BR NULL .
+.SH CAVEATS
+You have to compile your program using
+.I -lcommon
+as a compiler flag to properly link
+your function to the library.
+.SH AUTHORS
+  (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich:
+.RS
+Etienne Favey <favey@geod.ethz.ch>,
+.RE
+.RS
+Marc Cocard <cocard@geod.ethz.ch>
+.RE
+.SH "SEE ALSO"
+.BR read_comment (3ggl),
+.BR read_line (3ggl),
+.BR isspace (3),
+.BR sscanf (3)

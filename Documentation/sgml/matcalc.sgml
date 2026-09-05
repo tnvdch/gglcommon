@@ -1,0 +1,799 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/matcalc.sgml,v $
+#
+#   $Id: matcalc.sgml,v 1.8 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: matcalc.sgml,v $
+#   Revision 1.8  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.7  2000/02/24 10:59:42  favey
+#   typo
+#
+#   Revision 1.6  1999/06/01 13:28:52  cocard
+#   m_det added
+#
+#   Revision 1.5  1998/09/09 12:21:18  cocard
+#   *** empty log message ***
+#
+#   Revision 1.4  1998/07/20 15:08:03  favey
+#   *** empty log message ***
+#
+#   Revision 1.3  1998/07/01 15:17:21  cocard
+#   m_separate_sym added
+#
+#   Revision 1.2  1998/06/24 11:39:27  cocard
+#   m_jacobi added
+#
+#   Revision 1.1  1998/05/29 12:03:11  cocard
+#   Initial revision
+#
+#
+#
+
+<sect> matcalc (Revision 1.7 -- 09/09/98)
+
+
+<p>The unit <tt/matcalc/ regroups routines for matrix operations. 
+In many programs implementing adjustments using the least squares method,
+matrices have to be dealt with. In <tt/matcalc.h/, some useful routines 
+ for matrix operations are implemented.
+
+<p>The library functions do not perform any checks for correct matrix
+dimensions! If compiled with <tt/WITH_DEBUG/ defined, most 
+functions will perform some checks to find programming
+errors more easily.
+
+<sect1> Matrix Numerical Type and Miscellaneous Macro Definitions
+
+<p>All matrices are arrays of type <tt/double/. This is defined 
+with the  macro <tt/MATTYP/ and should only be redefined, if you need
+the library for calculating big matrices of another numerical type 
+other than <tt/double/.
+
+<sect2> macro definitions
+<p>
+<descrip>
+<tag/ MATTYP/
+   This macro defines the numerical type for all matrix operations
+   in <tt/matcalc.h/. By default it is set to <tt/double/.
+   If <tt/MATTYPE/ has to be redefined, you will need to 
+   recompile the whole library to use your special version.
+
+<tag/NEARLYZERO/
+  This macro defines an iteration criterion for inverting
+  matrices. It is set to <tt/1.0e-15/.
+
+<tag/MAT_TRUE and MAT_FALSE/
+  <tt/MAT_TRUE = 1/ and <tt/MAT_FALSE = 0/. These two macros 
+  were introduced to make life easier and the code more readable.
+  <em/Beware:/ in C everything <tt/!= 0/ is considered true!
+</descrip>
+
+<sect2> struct matrix
+<label id="struct-matrix">
+<p>The matrix structure type is used to store a matrix together with its
+description and size definition. It contains the following members:
+
+<p>
+<tscreen><verb>
+  struct matrix {
+     char *name; 
+     MATTYPE **mat; 
+     MATTYPE *fast; 
+     int row; int col; 
+     int dim_row; int dim_col 
+  }
+</verb></tscreen>
+
+<p><tt/char *name/. 
+You may optionally assign a name to your matrix. 
+This field is only processed by some I/O functions of the library. 
+It may serve during the debugging stage of a program.
+
+<p><tt><bf>MATTYPE **mat</bf></tt>.
+Normal access to matrix. With this structure element you may
+access a matrix element using a syntax like <tt/matr->mat[4][2]/.
+Actually, all of the library functions access the matrix this way.
+
+<p><tt><bf>MATTYPE *fast</bf></tt>.
+Fast access to matrix. Through this structure element it is possible to
+access the whole matrix as a single array of <tt/MATTYPE/. This might
+prove useful for writing filters with fuzzy pointer usage. If you don't
+know, what I'm talking about, don't use it!
+
+<p><tt><bf>int row</bf></tt> and <tt><bf>int col</bf></tt> correspond to the 
+ actual number of rows and columns in use. These values must never exceed
+ <tt/dim_row/ and <tt/dim_col/ resp. 
+
+<p><tt><bf>int dim_row</bf></tt> and <tt><bf>int dim_col</bf></tt> correspond to
+allocation size of the matrix. These values are used during initialization (<tt/m_init/)
+for memory allocation and never changed by any library function thereafter.The actual
+dimension in use are stored in <tt/int row/ and <tt/int col/.
+
+
+<sect1>Initializing and Freeing of a Matrix
+
+<p>You should always operate with pointers to a matrix structure.
+The matrix initialization routine will allocate all the needed
+space, including the space for the structure itself.
+
+<sect2>m_init
+<p>
+<tscreen><verb>
+struct matrix * m_init (const int row, const int col)
+</verb></tscreen>
+
+<p>This function allocates the memory needed for a matrix
+of the dimensions specified with <tt/row/ and <tt/col/.
+It sets the <tt/dim_row/ and <tt/dim_col/ as well as
+<tt/row/ and <tt/col/ members of the structure type. 
+ All matrix elements are initialized with zeros. 
+The return value is the pointer to the newly allocated
+matrix or a NULL pointer, if the allocation was not successful.
+
+<sect2>m_name
+<p>
+<tscreen><verb>
+int m_name (struct matrix *m,const char *newname)
+</verb></tscreen>
+
+<p>This function copies the string passed by <tt/newname/
+to the <tt/name/ member of the matrix <tt/m/.
+
+<sect2>m_init_name
+<p>
+<tscreen><verb>
+struct matrix * m_init_name (const int row, const int col, const char *newname)
+</verb></tscreen>
+
+<p>This function allocates the memory needed for a matrix
+of the dimensions specified with <tt/row/ and <tt/col/.
+It copies the string passed by <tt/newname/
+to the <tt/name/ member of the matrix <tt/m/.
+It sets the <tt/dim_row/ and <tt/dim_col/ as well as
+<tt/row/ and <tt/col/ members of the structure type. 
+All matrix elements will be initialized with zeros. 
+The return value is the pointer to the newly allocated
+matrix or a NULL pointer, if the allocation was not successful.
+(e.g. when there is no virtual memory left)
+
+<sect2>m_free
+<p>
+<tscreen><verb>
+void m_free (struct matrix *m)
+</verb></tscreen>
+
+<p>This function properly frees all the memory space allocated by
+an earlier call to <tt/m_init/ or <tt/m_initName/.
+
+<sect2>m_resize
+<p>
+<tscreen><verb>
+int m_resize (stuct matrix *m,
+	      const int row,
+	      const int col,
+	      const int set_zero)
+</verb></tscreen>
+<p>
+This function resizes a matrix <tt/*m/ to number of columns <tt/col/ and number of rows <tt/row/. The return value for proper resizing is 0.
+
+
+<sect1>Filling Elements of a Matrix
+
+<p>With the following functions you may fill part or the whole of 
+a matrix with a specific value. The return value is <tt/0/ upon
+successful completion of the task. Actually, it always
+succeeds or causes a <tt/SIGSEGV/ signal, unless <tt/WITH_DEBUG/
+was defined at compile time of the library.
+
+<sect2>m_fill
+<p>
+<tscreen><verb>
+int m_fill (struct matrix *m, const int row, const int col, const MATTYPE value)
+</verb></tscreen>
+
+<p>This function sets the matrix element at row <tt/row/ and
+column <tt/col/ to the value <tt/value/. It is actually kind of obsolete,
+except that it performs some paranoid checks on the validity of
+<tt/row/ and <tt/col/ when <tt/WITH_DEBUG/ was defined
+at compile time of the library.
+
+<sect2>m_fill_row
+<p>
+<tscreen><verb>
+int m_fill_row (struct matrix *m, const int row, const MATTYPE value)
+</verb></tscreen>
+
+<p>This function  fills the row specified by <tt/row/ with
+<tt/value/. It  performs some paranoid checks on the validity of
+<tt/row/ when <tt/WITH_DEBUG/ was defined at compile time of the library.
+
+<sect2>m_fill_col
+<p>
+<tscreen><verb>
+int m_fill_col (struct matrix *m, const int col, const MATTYPE value)
+</verb></tscreen>
+
+<p>This function  fills the column specified by <tt/col/ with
+<tt/value/. It performs some paranoid checks on the validity of
+<tt/row/ when <tt/WITH_DEBUG/ was defined at compile time of the library.
+
+<sect2>m_fillsym
+<p>
+<tscreen><verb>
+int m_fillsym (struct matrix *m)
+</verb></tscreen>
+
+<p>This function assumes <tt/m/ to be an upper triangular matrix and
+fills the lower triangle symmetrically.
+
+<sect2>m_zero
+<p>
+<tscreen><verb>
+int m_zero (struct matrix *m)
+</verb></tscreen>
+
+<p>This function sets all matrix elements to zero. It is implicitly
+called by <tt/m_init/ and <tt/m_init_name/
+
+<sect2>m_zero_row
+<p>
+<tscreen><verb>
+int m_zero_row (struct matrix *m, int row)
+</verb></tscreen>
+
+<p>This function is similar to <tt/m_fill_row/, except that it
+uses a faster algorithm to zero all matrix elements in the row
+<tt/row/. Since it is not possible to use the same approach
+for colums no function <tt/m_zero_col/ exists. It can be generated
+by using <tt/m_fill_col/ with the value <tt/0/.
+
+<sect2>m_unit
+<p>
+<tscreen><verb>
+int m_unit (struct matrix *m)
+</verb></tscreen>
+<p> This function sets all the diagonal matrix elements to one
+and all other matrix elements to zero.
+
+<sect2>m_set
+<p>
+<tscreen><verb>
+int m_set (struct matrix *m, MATTYPE value)
+</verb></tscreen>
+
+<p>This function sets all matrix elements to the value <tt/value/.
+
+<sect2>m_random
+<p>
+<tscreen><verb>
+int m_random (struct matrix *m, MATTYPE fac)
+</verb></tscreen>
+
+<p>This function fills all matrix elements with random numbers.
+The random numbers are generated by subsequent calls to <tt/rand/
+declared in <tt/stdlib.h/. The random values lies in the range 
+ <tt/[0, fac[/.
+
+
+<sect1> Matrix Input-Output
+<p>
+The Common Library also provides tools to store and reread matrices
+to files. These functions are somewhat provisional and yet to be debugged
+completely.
+
+<sect2>m_write
+<p>
+<tscreen><verb>
+int m_write (FILE *fpout, struct matrix *m, const int fmt1, const int fmt2,
+	     int n, const int tr, const int title)
+</verb></tscreen>
+
+<p>This function prints a matrix <tt/m/ in ASCII format to the file <tt/fpout/.
+The values of <tt/fmt1/ and <tt/fmt2/ define the output format, where <tt/fmt1/
+ is the total length and <tt/fmt2/ the number of digits after the 
+decimal point. Additional line breaks within a row are inserted after 
+every  <tt/n/ values. (<tt/n = 0/ no additional line breaks).
+When <tt/tr = MAT_TRUE/, the function writes the transposed
+ matrix. When <tt/title = MAT_TRUE/, all columns and rows
+are labelled properly. 
+
+<sect2>m_writename
+<p>
+<tscreen><verb>
+void m_writename (FILE *fpout, struct matrix *m, 
+	         int tr)
+</verb></tscreen>
+<p>
+This function writes the name of the matrix <tt/*m/,
+i.e. <tt/m->name/, to <tt/*fpout/. If <tt/tr/ is not equal zero, the
+name gets the addition 'transposed'.
+
+<sect2>m_writefmt
+<p>
+<tscreen><verb>
+int m_writefmt (FILE *fpout, struct matrix *m, const char * fmt, int n,
+		const int tr, const int title)
+</verb></tscreen>
+
+<p> This function is similar to <tt/m_write/. Its prints a matrix 
+<tt/m/ in ASCII format to the file <tt/fpout/. <tt/fmt/ represents a
+format string for one element (e.g. <tt/"5.3lf"/). Additional  line breaks 
+within a row  are inserted after every  <tt/n/ values. (<tt/n = 0/ no 
+additional line breaks). When <tt/tr = MAT_TRUE/, the function writes the transposed
+matrix. When <tt/title = MAT_TRUE/, all columns and rows are labelled properly.
+
+<sect2>m_write_filled
+<p>
+<tscreen><verb>
+int m_write_filled (FILE *fpout, struct matrix *m, const int tr, MATTYPE nearlyzero)
+</verb></tscreen>
+
+<p>This functions writes only the distribution of zero-nonzero elements in the
+matrix <tt/m/. When <tt/tr = MAT_TRUE/, it writes the information in transposed 
+form. All elements with an absolute value smaller than <tt/nearlyzero/ are considered
+zero. This routine may be useful during the debugging stage of a program.
+
+<sect2>m_writebin
+<p>
+<tscreen><verb>
+int m_writebin (FILE *fpout, struct matrix *m)
+</verb></tscreen>
+
+<p>This function writes the matrix <tt/m/ to the binary file <tt/fpout/ which 
+must already be open. (This allows to write more than one matrix to the same
+file).
+
+<sect2>m_writebin2
+<p>
+<tscreen><verb>
+int m_writebin2 (char * fname, struct matrix *m)
+</verb></tscreen>
+<p>
+This function writes the matrix <tt/m/ to the binary file
+<tt/fname/. Unlike the function <tt/m_writebin/, this function opens
+and closes the file <tt/fname/.
+
+<sect2>m_readbin
+<p>
+<tscreen><verb>
+int m_readbin (FILE *fpin, struct matrix **m)
+</verb></tscreen>
+
+<p>This function is the counterpart of <tt/m_writebin/. It 
+reads the matrix <tt/m/ from the binary file <tt/fpin/ which 
+must already be open.(This allows to read sequentially  several matrices 
+from the same file). If the matrix <tt/m/ is a 
+<tt/NULL/ pointer memory is allocated, if not the routine  supposes that the 
+matrix is already initialized. In this case an error is returned
+(negative return value) if the matrix to read does not fit in the allocated space. 
+
+<sect2>m_readbin2
+<p>
+<tscreen><verb>
+int m_readbin2 (char *fname, struct matrix **m)
+</verb></tscreen>
+<p>
+This function is similar to <tt/m_readbin/, but unlike <tt/m_readbin/,
+this function opens and closes the file <tt/fname/.
+
+<sect2>m_readascii
+<p>
+<tscreen><verb>
+int m_readascii( char *fname, struct matrix **m, int row2read, int col2read)
+</verb></tscreen>
+
+<p> This function reads a matrix from an ASCII file. The values <tt/row2read/
+and <tt/col2read/ specify the dimension of the matrix. If one of these two values
+is zero, the routine counts the total number of values on the file and calculates
+by divison the corresponding missing dimension. In this case the file is read
+twice. Line delimiters are ignored and element after element read (row fill).
+If the matrix <tt/m/ is a <tt/NULL/ pointer memory is allocated, if not the 
+routine supposes that the matrix is already initialized. In this case an error is 
+returned (negative return value) if the matrix to read does not fit in the 
+allocated space. 
+
+
+
+<sect1>Arithmetic Operations on Matrices
+
+<p>The Common Library only provides some basic matrix operations. In all routines
+the result matrix has to be initialzed externaly and a return value <tt/0/ indicates
+a successfull completion of the operation.
+
+<sect2>m_add
+<p>
+<tscreen><verb>
+int m_add (struct matrix *m1, struct matrix *m2, struct matrix *m_res)
+</verb></tscreen>
+
+<p>This function adds matrix <tt/m1/ to matrix <tt/m2/. The result is
+writen to matrix <tt/m_res. (m_res = m1 + m2). m_res/ must be initialized.
+
+
+<sect2>m_sub
+<p>
+<tscreen><verb>
+int m_sub (struct matrix *m1, struct matrix *m2, struct matrix *m_res)
+</verb></tscreen>
+This function substracts matrix <tt/m2/ from matrix <tt/m1/. The result is
+writen to matrix <tt/m_res. (m_res = m1 - m2). m_res/ must be initialized.
+
+
+<sect2>m_mult
+<p>
+<tscreen><verb>
+int m_mult (struct matrix *m1, const int m1tr, struct matrix *m2,
+	    const int m2tr, struct matrix *m_res)
+</verb></tscreen
+
+<p> This function multiplies matrix <tt/m1/ with matrix <tt/m2/. The
+result matrix <tt/m_res/ must be initialized. If the parameter <tt/m1tr
+= MAT_TRUE/ the transposed matrix of <tt/m1/ is used. If the parameter
+ <tt/m2tr = MAT_TRUE/ the transposed matrix of <tt/m2/ is used. This 'transpose'
+flag allows to use the transposed matrix in a multiplication 
+without having to physically generate this transposed matrix using <tt/m_trans/. 
+ 
+<p>Example: <tt/m_mult(m1, MAT_TRUE, m2, MAT_FALSE, m_res)/ for  <tt/m_res = m1^T * m2/. 
+
+<sect2>m_multx
+<p>
+<tscreen><verb>
+int m_multx (struct matrix *m, MATTYPE scalar, struct matrix *m_res)
+</verb></tscreen>
+
+<p> This function is the scalar multiplication of the matrix <tt/m/ by
+the scalar value <tt/scalar/. The result matrix <tt/m_res/ must be
+initialized.
+
+
+<sect2>m_trace
+<p>
+<tscreen><verb>
+MATTYPE m_trace (struct matrix *m)
+</verb></tscreen>
+<p> The return value of this function is the trace of the matrix <tt/m/.
+
+
+<sect2>m_trans
+<p>
+<tscreen><verb>
+int m_trans (struct matrix *m, struct matrix *m_res)
+</verb></tscreen>
+
+<p> This function fills the matrix <tt/m_res/ with the transposed version
+of the original matrix <tt/m/. The matrix <tt/m_res/ must be initialized.
+
+<sect2>m_det
+<p>
+<tscreen><verb>
+int m_det(struct matrix *m, MATTYPE *det)
+</verb></tscreen>
+<p> This function calculates the determinant <tt/det/ of a quadratic matrix.
+Note that the routine needs to create a copy of the matrix. A nonzero
+return value indicates an error.
+
+<sect2>m_atpa1
+<p>
+<tscreen><verb>
+int m_atpa1 (struct matrix *a, struct matrix *p, struct matrix *atpa)
+</verb></tscreen>
+
+<p> This function calculates a normal equation matrix <tt/atpa/ from
+a design matrix <tt/a/ of dimension (<tt/n x m/) and a weighting matrix 
+<tt/p/ of dimension (<tt/n x n/). The result matrix is of dimension 
+(<tt/m x m/) and must be initialized. <tt/atpa = a(transposed) * p * a/. 
+<bf/Attention/ : the matrix <tt/p/ is considered to be  diagonal and
+stored in a matrix of dimension <tt/1 x n/. Element p(i,i) is stored in
+<tt/p[0][i]/.
+
+<sect2>m_pivot
+<p>
+<tscreen><verb>
+int m_pivot (struct matrix *m, int row, int col)
+</verb></tscreen>
+
+<p> This function pivots the element <tt/m[row][col]/ in the matrix <tt/m/. 
+The pivoting corresponds to one step in an inversion using Gauss elimination.
+
+<sect2>m_inv
+<p>
+<tscreen><verb>
+int m_inv (struct matrix *m)
+</verb></tscreen>
+
+<p>This function calculates the inverse of the matrix <tt/m/. The original
+matrix is overwritten (replaced by its inverse). The algorithm works with
+a Gauss elimination (pivoting). The function returns <tt/0/ on successful
+completion of the inversion. In the opposite case the return value is the defect
+of the matrix. <bf/Attention/: The routine may fail for
+not positive definite matrices, because pivot elements are only choosen
+along the diagonal. (MC This should be changed in a later version MC). 
+(Note that all normal equation matrices are positive definite).
+
+<sect2>m_cholesky_decomposition
+<p>
+<tscreen><verb>
+int m_cholesky_decomposition (struct matrix *m)
+</verb></tscreen>
+
+<p>This function calculates the upper triangular matrix associated to
+the Cholesky inversion. The upper part of the original matrix is 
+overwritten with the resulting triangular matrix. (The lower part
+ excluding the diagonal still helds the original elements).
+
+<sect2>m_choleskyinv
+<p>
+<tscreen><verb>
+int m_choleskyinv (struct matrix *m)
+</verb></tscreen>
+
+<p>This function calculates the inverse of the matrix <tt/m/. The original
+matrix is overwritten (replaced by its inverse). The algorithm is based
+on a Cholesky decomposition and only works with positive definite matrices.
+It is faster than <tt/m_inv/. The function returns <tt/0/ on successful
+completion of the inversion. In the opposite case the return value is the defect
+of the matrix. (Note that all normal equation  matrices are positive definite).
+
+<sect2>m_separate_sym
+<p>
+<tscreen><verb>
+int m_separate_sym(struct matrix *m, struct matrix *sym, struct matrix *asym)
+</verb></tscreen>
+
+<p>This function decomposes the matrix m in a sum af two matrices, a symmetrical
+one <tt/sym/ and an asymmetrical one <tt/asym/. <tt/(m = sym + asym)/. Note that 
+a <tt/NULL/ pointer for <tt/sym/ or <tt/asym/ means that this matrix will
+not be calculated. 
+
+<sect1> Administrative and Miscellaneous Operations on Matrices
+
+<p>This last chapter regroups all administrative tools. In addition all tools which
+do not fit in one of the previous chapter are included here.
+
+<sect2>m_WriteMatInfo
+<p>
+<tscreen><verb>
+void m_WriteMatInfo (struct matrix *m, int i)
+</verb></tscreen>
+<p>
+This function writes the name and the number <tt/i/, the dimensions
+and the memory allocation of the matrix <tt/m/ to STDERR.
+
+<sect2>m_error
+<p>
+<tscreen><verb>
+void m_error (const char *procname, 
+	     struct matrix *m1,
+	     struct matrix *m2,
+	     struct matrix *m3,
+	     int *row, int *col)
+</verb></tscreen>
+<p>
+This function writes information about the matrices <tt/m1/, <tt/m2/ and
+<tt/m3/ using function <tt/m_WriteMatInfo/ and the variables <tt/row/
+and <tt/col/ to STDERR, provided that the pointers do not point to NULL. The
+function exits with status EXIT_FAILURE.
+
+<sect2>m_checkdimension
+<p>
+<tscreen><verb>
+void m_checkdimension (struct matrix *m)
+</verb></tscreen>
+<p>
+This function compares the <tt/dim_row/ with <tt/row/ and <tt/dim_col/
+with <tt/col/ of the matrix <tt/m/. If <tt/row/ or <tt/col/ are greater
+than <tt/dim_row/ or <tt/dim_col/ respectively, the function calls
+<tt/m_error/. 
+
+<sect2>m_copy
+<p>
+<tscreen><verb>
+int m_copy (struct matrix *source, struct matrix *target)
+</verb></tscreen>
+
+<p>This function stores a copy of the matrix <tt/source/ in matrix <tt/target/.
+The matrix <tt/target/ must be initialized.
+
+<sect2>m_sym_check
+<p>
+<tscreen><verb>
+MATTYPE m_sym_check (struct matrix *m)
+</verb></tscreen>
+
+<p>This function checks the elements <tt/m[i][j]/ versus <tt/m[j][i]/. In the case
+of a symmetric matrix the difference between these elements should be zero. The
+function returns the maximal absolute value of the difference encountered.
+
+<sect2>m_add_block
+<p>
+<tscreen><verb>
+int m_add_block (struct matrix *m, struct matrix *block, int row, int col)
+</verb></tscreen>
+
+<p> This function adds a submatrix <tt/block/ to the matrix <tt/m/. The starting
+point in matrix <tt/m/ is given by <tt/row/ and <tt/col/. This means e.g. that
+the element <tt/block[i][j]/ is added to <tt/m[i+row][j+col]/. The result is 
+the updated matrix <tt/m/.
+
+<sect2>m_pick_block
+<p>
+<tscreen><verb>
+int m_pick_block (struct matrix *m, struct matrix *block, 
+                  int row, int col, int drow, int dcol)
+</verb></tscreen>
+
+<p> This functions picks a submatrix <tt/block/ from the original matrix <tt/m/.
+<tt/row/ and <tt/col/ are the starting point in the matrix <tt/m/.
+ <tt/drow/ and <tt/dcol/ are the number of rows and columns to be extracted. 
+Hence they correspond to the dimension of the picked block. (<tt/block[i][j] = 
+m[i+row][j+col]/). Note that the matrix block must already be initialized.
+
+<sect2>m_del_row
+<p>
+<tscreen><verb>
+int m_del_row (struct matrix *m, int row)
+</verb></tscreen>
+
+<p>This function deletes the row <tt/row/ from the matrix <tt/m/.
+Note that the memory allocation dimensions (<tt/dim_row x dim_col/) 
+of the matrix <tt/m/ are not changed.
+
+<sect2>m_del_col
+<p>
+<tscreen><verb>
+int m_del_col (struct matrix *m, int col)
+</verb></tscreen>
+
+<p>This function deletes the column <tt/col/ from the matrix <tt/m/.
+Note that the memory allocation dimensions (<tt/dim_row x dim_col/) 
+of the matrix <tt/m/ are not changed.
+
+<sect2>m_pushup
+<p>
+<tscreen><verb>
+int m_pushup (struct matrix *m)
+</verb></tscreen>
+
+<p> This function shifts all rows of the matrix <tt/m/ up. (row(i) becomes row(i+1)).
+The last row is replaced by the first one. (row(last) becomes row(0)).
+
+<sect2>m_pushdown
+<p>
+<tscreen><verb>
+int m_pushdown (struct matrix *m)
+</verb></tscreen>
+
+<p> This function shifts all rows of the matrix <tt/m/ down. (row(i) becomes row(i-1)).
+The first row is replaced by the last one. (row(0) becomes row(last)).
+
+<sect2>m_max_col
+<p>
+<tscreen><verb>
+int m_max_col (struct matrix *m, const int col, MATTYPE *max, int *row)
+</verb></tscreen>
+
+<p>The function searches the maximal value <tt/max/ in the column <tt/col/ of 
+ matrix <tt/m/. <tt/row/ corresponds to the  row where the maximum value 
+was encountered.
+
+<sect2>m_min_col
+<p>
+<tscreen><verb>
+int m_min_col (struct matrix *m, const int col, MATTYPE *min,int *row)
+</verb></tscreen>
+
+<p>The function searches the minimal value <tt/max/ in the col <tt/col/ of 
+ matrix <tt/m/. <tt/row/ corresponds to the  row where the maximum value 
+was encountered.
+
+<sect2>m_max
+<p>
+<tscreen><verb>
+int m_max (struct matrix *m, MATTYPE *max, int *row,int *col)
+</verb></tscreen>
+
+<p>The function searches the maximum value <tt/max/ in matrix <tt/m/. 
+<tt/row/ and <tt/col/ give its corresponding location.
+
+<sect2>m_min
+<p>
+<tscreen><verb>
+int m_min (struct matrix *m, MATTYPE *min, int *row, int *col)
+</verb></tscreen>
+
+<p>The function searches the minimal value <tt/max/ in matrix <tt/m/. 
+<tt/row/ and <tt/col/ give its corresponding location.
+
+<sect2>m_absmax
+<p>
+<tscreen><verb>
+int m_absmax (struct matrix *m, MATTYPE *max, int *row, int *col)
+</verb></tscreen>
+
+<p>The function searches the maximum absolute value <tt/max/ in matrix <tt/m/. 
+<tt/row/ and <tt/col/ give its corresponding location.
+
+<sect2> m_polynom_approx
+<p>
+<tscreen><verb>
+int m_polynom_approx (struct matrix *data, 
+		      const int  col_x,   const int col_y,  
+		      const int  col_w,   const int col_app,
+		      const int col_res,  const int row_beg,
+		      const int row_end,  const int degree,
+		      MATTYPE x0, MATTYPE *dummy,
+		      struct matrix *coeff, struct matrix *qxx, MATTYPE *s0)
+</verb></tscreen>
+<p> This function performs a polynomial approximation based on the
+following formula using a least square adjustment :
+<p>
+<tscreen><verb>
+ y = a0*(x-x0) + a1*(x-x0)^2 + a2*(x-x0)^3 + ....
+</verb></tscreen>
+
+<p>Data are supposed to be organized columnwise in the 
+matrix <tt/m/. The number of the column containing the x-values is
+given by <tt/col_x/.  
+A negative value for <tt/col_x/ means that the x-value is taken
+identical to the index. 
+The number of the column containing the y-values is given by
+<tt/col_y/. The number of the column containing the observation (x)
+weight is given by col_w. A negativ value for <tt/col_w/ sets the weight to
+1 for all obs. The approximated y-values are stored in column
+<tt/col_app/ and the residual of the approximation in column
+<tt/col_res/. A negative value for <tt/col_app/ or <tt/col_res/ means
+that these values will not be stored at all. Note that 
+ the following simple relationship helds : residual = y - y(approx).
+<p><tt/row_beg/ and <tt/row_end/ allows a windowing on the rows of the matrix.
+Only rows within this window are used for the calculation. A negative
+value for <tt/row_beg/ and <tt/row_end/ sets the window to the full
+length of the data.
+<p><bf/Attention/: <tt/degree/ defines the number of coefficients of the 
+polynomial to be calculated. e.g. for a polynomial approximation of degree 1 
+(linear approximation) the parameter <tt/degree/ has to be put to <tt/2/. 
+(2 coefficients : a constant term and a linear term).
+<p><tt/x0/ allows to shift the x-values (see formula). If the y-array is not
+complete a dummy value <tt/dummy/ allows to discard corresponding rows. Note
+that a value <tt/dummy = NULL/ means that no dummy check is performed.  
+<p>The result of the approximation : the coefficient of the approximation <tt/coeff/ 
+(dimension <tt/degree x 1/), the cofactor matrix  <tt/qxx/ (dimension <tt/degree x degree/)
+the covariance of unit weight <tt/s0/. The two output matrices <tt/coeff/ and <tt/qxx/ must
+be initialized.
+
+<sect1>Non-free routines
+
+<p>For convience routines from numerical recipies have been slightly modified
+for compatibilty with <tt/struct matrix/ of <tt/matcalc/. These routines are 
+held separately in files called <tt/nfcalcmat.c/ resp. <tt/nfcalmat.h/.
+
+<sect2> m_jacobi<em/x/
+<p>
+<tscreen><verb>
+int m_jacobi1(struct matrix *a, struct matrix *eval, struct matrix *evec, int *nrot)
+int m_jacobi2(struct matrix *a, struct matrix *evec, int *nrot)
+</verb></tscreen>
+
+<p>Both functions perform an eigenvalue decomposition of a symmetric matrix <tt/a/.
+with <tt/A = R D R^T/, where <tt/D/ is a diagonal matrix containing the 
+eigenvalues and <tt/R/ is a rotation matrix.
+<p> Identical to both routines : The symmetrical input matrix <tt/a/, the output
+matrix containing the eigenvectors <tt/evec/ in form of a rotation matrix. <tt/nrot/
+is the total number of individual rotations during iteration. Both routines return
+<tt/0/ on successful completion otherwise <tt/-1/.
+<p> Difference between <tt/m_jacobi1/ and <tt/m_jacobi2/ : In <tt/m_jacobi2/ the 
+original matrix <tt/a/ is replaced by the diagonal eigenvalue matrix, whereas
+in <tt/m_jacobi1/ the original matrix <tt/a/ is preserved. The resulting eigenvalues
+are stored in the vector <tt/eval/. <bf/Attention:/ <tt/eval/ is a vector of
+dimension <tt/1 x dim/.
+
+
+
+
+
+

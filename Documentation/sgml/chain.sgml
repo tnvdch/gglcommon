@@ -1,0 +1,257 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/chain.sgml,v $
+#
+#   $Id: chain.sgml,v 1.4 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: chain.sgml,v $
+#   Revision 1.4  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.3  1999/04/08 13:03:14  cocard
+#   *** empty log message ***
+#
+#   Revision 1.2  1998/05/29 13:10:03  favey
+#   *** empty log message ***
+#
+#   Revision 1.1  1998/05/29 12:00:18  cocard
+#   Initial revision
+#
+#
+#
+
+<sect>chains (Revision 1.2 -- 29/05/98)
+<p>
+<sect1> Type Definition of chain
+<p>
+<sect2>Struct Node
+<p>
+<tscreen><verb>
+struct Node
+{
+  struct Node *prev;  /* pointer to previous node */
+  struct Node *next;  /* pointer to next node */ 
+  void *data;         /* void pointer to data */
+}
+</verb></tscreen>
+
+The structure of a chain can be resumed by the following diagram:
+
+<tscreen><verb>
+   nil <- head <--> node1 <--> node2 ....  <--> last node  -> nil
+           |          |          |                  |  
+          nil       data1      data2              dataN
+</verb></tscreen>
+
+In the case of a cyclic chain node1 and last node are connected 
+<tt/node1->prev = node last/ and <tt/node last->next = node1/).
+<tt/head->next/ still points to <tt/node1/.
+
+<tscreen><verb>
+   nil <- head ->    node1 <--> node2 ....  <--> last node  <--> node1
+           |           |          |                  |   
+          nil        data1      data2              dataN
+</verb></tscreen>
+
+
+<sect1> Memory Allocation of chains 
+<p>
+All of the functions in this section do memory allocation or
+free memory.
+
+<sect2>chain_init
+<p>
+<tscreen><verb>
+struct Node * chain_init(int *count)
+</verb></tscreen>
+<p>initialization of  a new chain. <tt/count/ is then number
+of elements in the chain (put to <tt/0/).
+
+<sect2>chain_newelement
+<p>
+<tscreen><verb>
+struct Node * chain_newelement(void * data)
+</verb></tscreen>
+<p> Memory allocation for a new <tt/Node/. 
+
+
+<sect2>chain_freeelement
+<p>
+<tscreen><verb>
+void chain_freeelement(struct Node * p, int removedata)
+</verb></tscreen>
+<p> Frees memory of a <tt/Node/. If <tt/removedata == TRUE, data/ is
+also freed, otherwise not. 
+It does <bf/not/ check if it was part of a chain and does <bf/not/
+remove it from a chain. See also <tt/chain_remove/.
+
+<sect2>chain_free
+<p>
+<tscreen><verb>
+void chain_free(struct Node *chain, int removedata, int count)
+</verb></tscreen>
+<p>Frees the memory of the entire chain. If the chain
+is cylcic the <tt/head/ of the chain must be passed to
+the function otherwise any node will do it.
+If <tt/removedata = TRUE/ the pointer <tt/data/
+of all nodes are also freed otherwise not. This allows
+to free the chain, as a skeleton structure, and to keep
+the data. The number of elements in
+the chain <tt/count/ is passed to the routine but not changed.
+
+
+<sect1>Inserting and Deleting nodes
+<p>
+No function in this section does anything like memory allocation
+or freeing, they only deal with the bookkeeping tasks of
+a chain.
+
+<sect2>chain_insert
+<p>
+<tscreen><verb>
+struct Node * chain_insert (struct Node *chain, struct Node *element, int *count)
+</verb></tscreen>
+<p>Inserts the node <tt/elememt/ in the chain, after the node <tt/chain/. 
+<tt/count/ represents the number of element in the chain and is incremented
+by <tt/1/.
+
+
+<sect2>chain_append
+<p>
+<tscreen><verb>
+struct Node * chain_append (struct Node *chain, struct Node *element, int *count)
+</verb></tscreen>
+<p>Inserts the node <tt/elememt/ in the chain as last member of the chain
+<tt/count/ represents the number of elements in the chain and is incremented
+by <tt/1/.
+
+<sect2>chain_insertsorted
+<p>
+<tscreen><verb>
+struct Node * chain_insertsorted (struct Node *chain, struct Node *element, 
+                                  int (*compare)(), int *count)
+</verb></tscreen>
+<p>Inserts the node <tt/elememt/ in the chain. The chain is supposed to
+be sorted and the new node is inserted in the correct place. The order
+is defined by the function <tt/compare/, wich takes the data pointer
+of 2 nodes as arguments. You must provide this function with the 
+following return values: ( returnvalue&gt;0  if node1&gt;node2 --
+returnvalue=0 if node1=node2 -- returnvalue&lt;0 if node1&lt;node2).
+<tt/count/ represents the number of elements in the chain and is incremented
+by <tt/1/.
+
+<sect2>chain_remove
+<p>
+<tscreen><verb>
+struct Node * chain_remove (struct Node * chain, int *count)
+</verb></tscreen>
+<p> Removes the Node <tt/chain/ from the chain.
+<tt/count/ represents the number of elements in 
+the chain and is decremented by <tt/1/.
+
+<sect1>Positioning in Chain
+<p>
+
+<sect2>chain_head
+<p>
+<tscreen><verb>
+struct Node * chain_head (struct Node *chain)
+</verb></tscreen>
+<p>Returns the head of the chain. Never use with cyclic chains.
+
+<sect2>chain_last
+<p>
+<tscreen><verb>
+struct Node * chain_last (struct Node *chain)
+</verb></tscreen>
+<p>Returns the last node of the chain. Never use with cyclic chains.
+
+<sect2>chain_next
+<p>
+<tscreen><verb>
+struct Node * chain_next (struct Node *chain)  
+</verb></tscreen>
+<p>Returns the next node of the chain or <tt/NULL/ at the end of the chain.
+
+<sect2>chain_prev
+<p>
+<tscreen><verb>
+struct Node * chain_prev (struct Node *chain)
+</verb></tscreen>
+<p>Returns the previous node of the chain or <tt/NULL/ at the 
+beginning of the chain.
+
+<sect1>Chain to Array Conversion 
+<p>
+<sect2>chain_to_array
+<p>
+<tscreen><verb>
+void * chain_to_array (struct Node * chain, int count)
+</verb></tscreen>
+<p>Converts a chain to an array (with allocation of memory for array 
+of pointers)
+Returns the array of pointers. 
+
+<sect2>array_to_chain
+<p>
+<tscreen><verb>
+struct Node * array_to_chain (void **array, int count)
+</verb></tscreen>
+<p>Converts an array to chain (with allocation of memory for the chain)
+Returns head of chain.
+
+<sect2>array_free
+<p>
+<tscreen><verb>
+void array_free (void **array, int removedata, int count)
+</verb></tscreen>
+<p>Frees the memory of the array. 
+If <tt/removedata = TRUE/ the pointer <tt/data/
+of all nodes are also freeed otherwise not. This allows
+to free the array of void, as a skeleton structure, and to keep
+the data. The number of elements in
+the chain <tt/count/ is passed to the routine but not changed.
+
+
+<sect1>Miscellaneous
+<p>
+<sect2>chain_cyclic
+<p>
+<tscreen><verb>
+struct Node * chain_cyclic (struct Node *chain)
+</verb></tscreen>
+<p>
+ Makes the chain cyclic by closing last with first node.
+<tt/head/ is returned. It must be saved for freeing the chain.
+
+<sect2>chain_acyclic
+<p>
+<tscreen><verb>
+struct Node * chain_acyclic(struct Node *head)
+</verb></tscreen>
+<p> Makes a cyclic chain acylcic. Breaks where header points at.
+
+<sect2>chain_quicksort1
+<p>
+<tscreen><verb>
+void chain_quicksort1(struct Node *node1, struct Node *node2, int (*compare)())
+</verb></tscreen>
+<p> Sorts the elements from node1 to node2 using quicksort algorithm.
+The order is defined by the function <tt/compare/, wich takes the data pointer
+of node1 and node2  as arguments. You must provide this function with the 
+following return values: ( returnvalue&gt;0  if node1&gt;node2 -- 
+returnvalue=0 if node1=node2 -- returnvalue&lt;0 if node1&lt;node2).
+
+<sect2>chain_quicksort2
+<p>
+<tscreen><verb>
+struct Node * chain_quicksort2(struct Node *chain, int (*compare)())
+</verb></tscreen>
+<p> Sorts the entire chain and returns head of the sorted chain. It uses
+<tt/chain_quicksort1/.
+
+
+

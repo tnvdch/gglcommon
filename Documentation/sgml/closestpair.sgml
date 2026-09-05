@@ -1,0 +1,68 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/closestpair.sgml,v $
+#
+#   $Id: closestpair.sgml,v 1.1 1998/05/29 12:00:43 cocard Exp $
+#
+#   $Log: closestpair.sgml,v $
+#   Revision 1.1  1998/05/29 12:00:43  cocard
+#   Initial revision
+#
+#
+#
+
+<sect>closestpair (Revision 1.3 -- 27/05/1998)
+
+<p> The unit <tt/closestpair/ provides routines to find a closest pair
+in a set of points.
+
+<sect1> Data Structures
+<p>
+<sect2>coord_2d
+<p>
+<tscreen><verb>
+typedef struct { int pnr; double x; double y; } coord_2d;
+</verb></tscreen>
+<p>
+<p><tt/int pnr/. 
+Point number.
+<p><tt/double x/.
+X-Coordinate of point.
+<p><tt/double y/.
+Y-Coordinate of point.
+
+<sect1> Routines
+<p>
+<sect2>clop
+<p>
+<tscreen><verb>
+double clop (coord_2d *yqueue, int n, double lowlim,
+             coord_2d *chigh, coord_2d *clow)
+</verb></tscreen>
+<p> 
+This routine attempts to find that pair of points
+(out of a coordinate list), whose distance between
+each other is minimal, not accepting those smaller
+than a lower limit (<tt/lowlim/). It returns the points
+in <tt/chigh/ and <tt/clow/. The function's return value is
+the found smallest distance or 99999 standing for
+infinity.
+
+
+<sect2>countinbox
+<p>
+<tscreen><verb>
+int countinbox(coord_2d *plist, int inlist, int n, int boxsize,
+               coord_2d hook, coord_2d *found, FILE *fplog)
+</verb></tscreen>
+<p>
+Given a set of point coordinates and one of those as
+<tt/hook/, this procedure looks for 4 other points in
+in a quadratic box of size <tt/boxsize/. Look at the
+if sequence to see where this box is in relation to
+hook.
+
+

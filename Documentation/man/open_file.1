@@ -1,0 +1,78 @@
+.TH OPEN_FILE 3ggl "11 August 1997" "GGL/IGP ETHZ" "GGL Common Lib"
+.SH NAME
+open_text_file, open_binary_file \- enhanced file opening
+.SH SYNOPSIS
+.B #include <common/inout.h>
+
+.RB "FILE *" open_text_file
+.RI "(char *" fname ", char *" mode ");"
+
+.RB "FILE *" open_binary_file
+.RI "(char *" fname ", char *" mode ");"
+.SH DESCRIPTION
+The function 
+.B open_text_file()
+and
+.B open_binary_file()
+open a file for operations in the
+.I mode
+specified. On Linux systems, those two functions behave identically.
+They have mainly been introduced for porting reasons, so the
+main programs using the library functions do not have to be altered.
+In addition to the operations performed by
+.BR fopen (3),
+these functions will print an error message, when a file could not
+be opened properly.
+
+The parameter
+.I mode
+may be one of the following strings:
+.RS
+"r" for reading,
+.RE
+.RS
+"w" for writing,
+.RE
+.RS
+"w+" for appending,
+.RE
+.RS
+"r+" for reading and writing,
+.RE
+.RS
+.RB "or any other mode accepted by " fopen "(3)."
+.RE
+
+.SH "RETURN VALUES"
+.BR open_text_file() " and " open_binary_file()
+return a pointer to the stream of the file
+.I fname
+in the case it could be opened in the desired
+.IR mode .
+If an error occurred while
+opening the file, these functions will return a
+.B NULL
+pointer. 
+.SH ERRORS
+The functions will call standard library functions
+that may set
+.IR errno .
+If any called function produces an error, the functions
+will print an appropriate error message to
+.BR stderr .
+.SH CAVEATS
+You have to compile your program using
+.I -lcommon
+as a compiler flag to properly link
+your function to the library.
+.SH AUTHORS
+  (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich:
+.RS
+Etienne Favey <favey@geod.ethz.ch>,
+.RE
+.RS
+Marc Cocard <cocard@geod.ethz.ch>
+.RE
+.SH "SEE ALSO"
+.BR fopen (3),
+.BR fclose (3)

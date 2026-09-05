@@ -1,0 +1,28 @@
+GGL Applications using the GGL Common Library
+---------------------------------------------
+
+gpskin:
+
+Author: Marc Cocard <cocard@geod.ethz.ch>
+A small tool to calculate GPS day, day of year, modified julian date,
+etc. from any of those values as input.
+This program is interactive and menu driven.
+
+trafo:
+
+Author: Etienne Favey <favey@geod.ethz.ch>
+Perform coordinate transformations between Swiss Military Projection,
+WGS, ITRF, and the like. The supported list of geodetic datums is
+incomplete and probably always will be.
+Type `trafo -h' for a short introduction.
+
+natra:
+
+Author: Etienne Favey <favey@geod.ethz.ch>
+Perform coordinate transformations between two freely defined reference
+frames, doing only translation and rotation (scaling suppressed).
+The systems have to be right handed. You have to supply controlpoints
+in both systems. The transformation parameters will be derived by LSM.
+Type `natra -h' for a short introduction.
+
+

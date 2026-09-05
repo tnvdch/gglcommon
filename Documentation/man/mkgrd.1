@@ -1,0 +1,113 @@
+.TH MKGRD 1ggl "11 Dec 2000" "GGL/IGP ETHZ" "GGL Common Lib"
+.SH NAME
+mkgrd \- Gridding an ASCII file to grd or surfer file format
+.SH SYNOPSIS
+\fBmkgrd\fP \fIxyzfile\fP \fB\-G\fP\fIgrdfile\fP \fB\-I\fP\fIx_inc\fP[/\fIy_inc\fP]
+\fB\-R\fP\fIwest/east/south/north\fP [ \fB\-b\fP\fIx_blocks\fP[/\fIy_blocks\fP] ] [ \fB\-D\fP ]
+[ \fB\-e\fP\fIepsilon\fP ]  [ \fB\-f\fP\fIpointfile\fP ] [ \fB\-h\fP ] [ \fB\-M\fP[\fIminimum\fP] ] [ \fB\-n\fP\fIexponent\fP ]
+[ \fB\-Q\fP ] [ \fB\-q\fP ] [ \fB\-r\fP\fIradius\fP ] [ \fB\-s\fP ] [ \fB\-S\fP ] [ \fB\-V\fP ] [ \fB\-z\fP ]
+.SH DESCRIPTION
+\fBmkgrd\fP reads a xyz table of arbitrary distributed points and
+creates a binary grdfile.  \fBmkgrd\fP will report if some of 
+the nodes are not filled in with
+data.  Such unconstrained nodes are set to NaN.
+.TP
+\fIxyzfile\fP
+ASCII file holding (x,y,z) values.  The triplets do not
+have to be sorted. Lines beginning with `#' are treated
+as comment lines.
+.TP
+.B \-G
+\fIgrdfile\fP is the name of the binary (or ASCII, see \fB\-s\fP)
+output grdfile.
+.TP
+.B \-I
+\fIx_inc\fP [and optionally \fIy_inc\fP] is the grid spacing.
+Not needed if \fB\-f\fP is supplied.
+.TP
+.B \-R
+\fIwest, east, south,\fP and \fInorth\fP specify the region of interest.
+.SH OPTIONS
+.sp
+.TP
+.B \-b
+\fIx_blocks\fP [and optionally \fIy_blocks\fP] is the number of blocks
+\fBmkgrd\fP will use for processing within the \fB\-R\fP boundaries.
+By default, this value is calculated from region boundaries and radius.
+.TP
+.B \-D
+This option is used only in conjunction with \fB\-f\fP. It causes
+\fBmkgrd\fP to print input point height and difference between
+input point height and interpolated point height.
+.TP
+.B \-e
+\fIepsilon\fP is the smoothing factor in the weight function 
+w= \fIepsilon\fP^n /( d^n + \fIepsilon\fP^n ), where d stands for
+the distance between output grid point and input point. The exponent
+\fIn\fP is chosen by the option \fB\-n\fP. [ Default is 
+\fIepsilon\fP = 1e-5 ].
+.TP
+.B \-f
+\fIpointfile\fP is used to acquire the \fIx\fP and \fIy\fP coordinates of
+the target interpolation point instead of a regular grid.
+Using this option changes the meaning of several other options.
+Points outside \fB\-R\fP will be ignored. Option \fB\-I\fP
+is meaningless and thus not required anymore. The file supplied 
+by \fB\-G\fP will not be a grid file, but an ASCII output file
+containing \fIx\fP, \fIy\fP and interpolated \fIh\fP.
+If \fB\-D\fP is supplied, input \fIh\fP and the height difference 
+will be written as fourth and fifth column as well.
+.TP
+.B \-h
+Given this option, \fBmkgrd\fP gives a short help information and
+exits immediately, ignoring all other parameters passed to it.
+.TP
+.B \-M
+The quadrant method of checking, if we are interpolating and not
+extrapolating is turned off. (See also option \fB\-Q\fP)
+\fIminimum\fP determines
+how many points must at least be allocated to a grid point in
+order to be a valid interpolation. This option implies \fB\-Q\fP.
+.TP
+.B \-n
+The exponent in the weight function. (See option \fB\-e\fP)
+[ Default is 2 ]
+.TP
+.B \-Q
+The quadrant method of checking, if we are interpolating and not
+extrapolating is turned off. This is the same as giving option
+\fB\-M\fP1. By default, a grid point will only be interpolated, when
+all 4 quadrants around a grid point contain at least one point
+contributing to the interpolation.
+.TP
+.B \-q
+Quiet operation. If not set, \fBmkgrd\fP will send progress reports to stderr.
+.TP
+.B \-r
+All points within \fIradius\fP contribute to a grid point interpolation.
+[Default: 20.0 m] (See also \fB\-e\fP)
+.TP
+.B \-s
+Output grid is ASCII surfer grid format [Default is GMT binary grid].
+.TP
+.B \-S
+Output grid as ASCII stream: x y z format [Default is GMT binary grid].
+.TP
+.B \-V
+Show version information and exit immediately.
+.TP
+.B \-z
+This option is used only in conjunction with \fB\-f\fP. When it is
+set, a point with r<0.1 get assigned a weight zero. This is used to
+exclude the point to be interpolated from the domain contributing
+to the interpolated height.
+.SH EXAMPLES
+To create a grdfile from the ASCII data in aaregletscher.xyz, try
+.br
+.sp
+mkgrd aaregletscher.xyz \fB\-r\fP10.0 \fB\-e\fP1.0
+\fB\-G\fPaare99.grd \fB\-R\fP653300/653400/161200/161300 \fB\-I\fP5\fB \-q\fP
+.br
+.sp
+.SH SEE ALSO
+gmt, xyz2grd, grd2xyz, grdedit, grdinfo

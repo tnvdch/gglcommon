@@ -1,0 +1,24 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/comabstract.sgml,v $
+#
+#   $Id: comabstract.sgml,v 1.1 1998/05/29 12:01:30 cocard Exp $
+#
+#   $Log: comabstract.sgml,v $
+#   Revision 1.1  1998/05/29 12:01:30  cocard
+#   Initial revision
+#
+#
+#
+
+<abstract>
+The GGL Common Library was developed at the Geodesy and Geodynamics
+Laboratory of the Institute of Geodesy and Photogrammetry at the
+Swiss Federal Institute of Technology in Zurich.
+It was designed to meet the need of useful library functions while
+programming scientific calculation and data processing software.
+</abstract>
+

@@ -1,0 +1,13 @@
+GGL Common Library --- Bug List (or ToDo List)
+(depends on the way you look at it ;-)
+This list is unsorted!
+
+apps/trafo.c
+------------
+
+* add more projections and reference frames (you got a new one?)
+
+libsrc/ggl_time.c
+-----------------
+
+* localtimenow does not work properly (Summer/Winter time problem)

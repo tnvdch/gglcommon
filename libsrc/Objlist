@@ -1,0 +1,67 @@
+# objects to check in and out
+# special is sed_matcalc
+
+RCSOBJECTS=\
+ global\
+ angles\
+ trafo\
+ chain\
+ closestpair\
+ cmdline\
+ crdtrans\
+ d1linear\
+ errproc\
+ ggl_time\
+ gridop\
+ inout\
+ sunras\
+ intersect\
+ sed_mat3\
+ sed_matcalc\
+ nfmatcalc\
+ parse\
+ quatern\
+ swiss\
+ mapnr\
+ mapcut\
+ tools\
+ window\
+ winterpol\
+ xyz2grd\
+
+# END RCSOBJECTS
+# objects to compile
+# special are [sil ]matcalc, they are created 
+# from sed_matcalc via a call to sed
+
+OBJECTS=\
+ global\
+ angles\
+ trafo\
+ chain\
+ closestpair\
+ cmdline\
+ crdtrans\
+ d1linear\
+ errproc\
+ ggl_time\
+ gridop\
+ inout\
+ sunras\
+ intersect\
+ imatcalc\
+ smatcalc\
+ lmatcalc\
+ matcalc\
+ nfmatcalc\
+ mat3\
+ lmat3\
+ parse\
+ quatern\
+ swiss\
+ mapnr\
+ mapcut\
+ tools\
+ window\
+ winterpol\
+ xyz2grd\

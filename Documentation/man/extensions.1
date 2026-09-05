@@ -1,0 +1,63 @@
+.TH EXTENSIONS 3ggl "11 August 1997" "GGL/IGP ETHZ" "GGL Common Lib"
+.SH NAME
+remove_extension, get_extension \- filename extension operations
+.SH SYNOPSIS
+.B #include <common/inout.h>
+
+.RB "char *" remove_extension
+.RI "(char *" filename ");"
+
+.RB "char *" get_extension
+.RI "(const char *" filename ");"
+.SH DESCRIPTION
+The function 
+.B remove_extension()
+will truncate the string
+.I filename
+by replacing the last dot in the string by a zero character.
+The string passed to this function will be modified!
+
+.B get_extension()
+returns a pointer to a newly allocated string containing the
+extension including the leading dot. The string
+.I filename
+that it is passed as an argument will not be altered!
+.SH "RETURN VALUES"
+.B remove_extension()
+will always return the pointer to
+.IR filename ,
+no matter whether there was an extension to be remove or not.
+
+.B get_extension()
+returns a pointer to a newly allocated string containing the
+extension including the leading dot.
+When no extension was present in
+.IR filename ,
+this function will return a
+.B NULL
+pointer.
+.SH ERRORS
+When no extension was present in
+.IR filename ,
+.B get_extension()
+will return a
+.B NULL
+pointer.
+.B remove_extension()
+does not know about any error condition.
+.SH CAVEATS
+You have to compile your program using
+.I -lcommon
+as a compiler flag to properly link
+your function to the library.
+.SH AUTHORS
+  (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich:
+.RS
+Etienne Favey <favey@geod.ethz.ch>,
+.RE
+.RS
+Marc Cocard <cocard@geod.ethz.ch>
+.RE
+.SH "SEE ALSO"
+.BR strrchr (3),
+.BR strdup (3)

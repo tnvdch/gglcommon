@@ -1,0 +1,14 @@
+PGNS=\
+ geoidadd\
+ gpstime\
+ gpsdate\
+ llh2proj\
+ natra\
+ tconv\
+ xyz2llh\
+ xyz2xyz\
+ addcol\
+ zval\
+ mapras\
+ mkgrd\
+ vitacc\

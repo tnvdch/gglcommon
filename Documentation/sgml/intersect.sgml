@@ -1,0 +1,154 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/intersect.sgml,v $
+#
+#   $Id: intersect.sgml,v 1.2 1998/09/09 12:21:18 cocard Exp $
+#
+#   $Log: intersect.sgml,v $
+#   Revision 1.2  1998/09/09 12:21:18  cocard
+#   *** empty log message ***
+#
+#   Revision 1.1  1998/05/29 12:02:49  cocard
+#   Initial revision
+#
+#
+#
+
+<sect>intersect (Revision 1.7 -- 09/09/1998)
+
+<p> The unit <tt/intersect/ regroups routines for geometrical intersection problems
+
+<sect1> Routines
+<p>
+<sect2>line_coord
+<p>
+<tscreen><verb>
+void line_coord (const double x[3], const double e[3], 
+                 const double dist, double xnew[3]) 
+</verb></tscreen>
+<p> Calculates the 3-dimensional coordinates of a point <tt/newpoint/ on a line,
+defined by an origin <tt/x/ and an unit vector <tt/e/. The new point is at
+a distance <tt/dist/ from the origin. (<tt/xnew = x + dist * e/).
+
+
+<sect2>intersection_line_ell3
+<p>
+<tscreen><verb>
+int intersection_line_ell3
+(const double x[3],           /* input:  point  coordinates */
+ const double e[3],           /* input:  unary direction vector */
+ const double axis[3],        /* input:  all 3 semi major axis  */ 
+ double *dist1,               /* output: distance from point to first intersection */
+ double *dist2)               /* output: distance from point to second intersection */
+</verb></tscreen>
+
+<p>Intersection of a line and an ellipsoid. Input parameter are the origin of the
+line  <tt/x/ and a unary direction vector <tt/e/. The origin of the ellipoid is
+(<tt/0,0,0/) and the 3 semi major axis given by <tt/axis/. 
+The distances <tt/dist1/ and <tt/dist2/
+ of the intersection points to the origin of the line <tt/0/ are returned. 
+The corresponding coordinates can then be calculated using the function <tt/line_coord/.
+ The return value of the function is the number of intersections found. 
+( 0 = no intersection / 1 = 1 tangent point / 2 =  2 intersecting points).
+In the last case the two distances are always returned so that <tt/dist1 < dist2/.
+
+
+<sect2>intersection_line_ell
+<p>
+<tscreen><verb>
+int intersection_line_ell
+(const double x[3],           /* input:  point  coordinates */
+ const double e[3],           /* input:  unary direction vector */
+ const double major_axis,     /* input:  semi major axis */ 
+ const double ex2,            /* input:  square value of excentricity */
+ double *dist1,               /* output: distance from point to first intersection */
+ double *dist2)               /* output: distance from point to second intersection */
+</verb></tscreen>
+
+<p> Intersection of a line and a ellipsoid of rotation (rotation axis = z-axis).
+Routine uses <tt/intersection_line_ell3/. Difference: ellipsoid is given
+by its semi major_axis <tt/major_axis/ and the square value of the excentricity <tt/ex2/.
+
+<sect2>intersection_line_sphere
+<p>
+<tscreen><verb>
+int intersection_line_sphere
+(const double x[3],           /* input:  point  coordinates */
+ const double e[3],           /* input:  unary direction vector */
+ const double radius,         /* input:  radius of sphere */ 
+ double *dist1,               /* output: distance from point to first intersection */
+ double *dist2)               /* output: distance from point to second intersection */
+</verb></tscreen>
+
+<p> Intersection of a line and a sphere.
+Routine uses <tt/intersection_line_ell3/. Difference: sphere is given by its radius 
+<tt/radius/.
+
+
+<sect2>intersection_line_longitude
+<p>
+<tscreen><verb>
+int intersection_line_longitude
+(const double x[3],           /* input:  point  coordinates */
+ const double e[3],           /* input:  unary direction vector */
+ const double longitude,      /* input:  longitude */
+ double *dist)                /* output: distance to intersection */
+</verb></tscreen>
+
+<p>Intersection of a line and a plane defined by a constant longitude.
+Input parameters are the origin of the line <tt/x/ and a unary direction vector <tt/e/.
+The plane is given by its longitude angle <tt/longitude/ (in radians). The
+distance <tt/dist/ of the intersection point to the origin of the line <tt/0/
+is returned. The corresponding coordinates  can then be calculated using the function 
+<tt/line_coord/. The return value of the function is the number 
+of intersections found. ( -1 = all points on the line lie in the plane /
+0 = no intersection / 1 = 1 intersection point).
+
+<sect2>intersection_line_latitude
+<p>
+<tscreen><verb>
+int intersection_line_latitude
+(const double x[3],           /* input:  point  coordinates */
+ const double e[3],           /* input:  unary direction vector */
+ const double latitude,       /* input:  latitude */
+ const double major_axis,     /* input:  semi major axis */ 
+ const double ex2,            /* input:  excentricity of ellipsoid squared */
+ double *dist1,               /* output: distance from point to first intersection */
+ double *dist2)               /* output: distance from point to second intersection */
+</verb></tscreen>
+
+<p>Intersection of a line with a conical defined by a constant ellipoidal latitude. Input
+ parameters are the origin of the line <tt/x/ and a unary direction vector <tt/e/,
+the semi major axis <tt/major_axis/ and the square value of the 
+ellipoidal excentricy <tt/ex2/ as well as the ellipsoidal latitude angle 
+<tt/latitude/ (in radians).
+The distances <tt/dist1/ and <tt/dist2/ of the intersection points to the origin 
+of the line <tt/0/ are returned. The corresponding coordinates can then be 
+calculated using the function <tt/line_coord/.The return value of the 
+function itself is the number of intersections found.( -1 = all points on line 
+lie on the conical / 0 = no intersection / 1 = 1 intersection point / 2 = 2 intersection
+points).In the last case the two distances are returned ordered (<tt/dist1 < dist2/).
+
+<sect2>intersection_circles
+<p>
+<tscreen><verb>
+int intersection_circles 
+(const double center1[2],     /* input:  coordinates of center of the first circle */
+ const double radius1,        /* input:  radius of the first circle */
+ const double center2[2],     /* input:  coordinates of center of the second circle */
+ const double radius2,        /* input:  radius of the second circle */
+ double res1[2],              /* output: coordinates of intersection 1 */
+ double res2[2])              /* output: coordinates of intersection 2 */
+</verb></tscreen>
+
+<p> 2D routine for the intersection of two circles, which are given
+by the coordinates of their centers <tt/center1/ resp. <tt/center2/
+and their radii <tt/radius1/ resp. <tt/radius2/. The resulting
+intersection points are returned in <tt/res1/ and <tt/res2/. 
+The return value of the function specifies the number of valid 
+intersections (-1, 0, 1, 2) where -1 means circles are identical /
+0 = no intersection / 1 = one tangential point / 2 = 2 
+intersection points.

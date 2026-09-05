@@ -1,0 +1,137 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/angles.sgml,v $
+#
+#   $Id: angles.sgml,v 1.3 1998/09/09 12:21:18 cocard Exp $
+#
+#   $Log: angles.sgml,v $
+#   Revision 1.3  1998/09/09 12:21:18  cocard
+#   *** empty log message ***
+#
+#   Revision 1.1  1998/09/09 12:20:02  cocard
+#   Initial revision
+#
+#   Revision 1.2  1998/07/01 15:17:21  cocard
+#   *** empty log message ***
+#
+#   Revision 1.1  1998/05/29 11:59:15  cocard
+#   Initial revision
+#
+#
+#
+
+<sect> angles (Revision 1.2 -- 06/05/98)
+<p> This unit regroups some routines for dealing with different
+representations of angles including the hexadecimal.
+
+<sect1> Type Definitions
+<p>
+
+<sect2> struct hms
+
+<p>The struct <tt/hms/, which stands for hour:minutes:seconds helds
+the hexadecimal representation of an angle (<tt/deg/ = degrees, 
+<tt/min/ = minutes, and <tt/sec/ = seconds).
+
+<tscreen><verb>
+struct hms {
+    int deg;
+    int min;
+    double sec;
+  } 
+</verb></tscreen>
+
+<sect2> struct Angle
+<p> The struct Angle regroups all different representation of an
+angle. <tt/rad/ = value in radian. <tt/grad/ = value in grad (one 
+circle = 400 grad), <tt/deg/ =decimal value in degrees
+(1 circle = 360 degrees), <tt/hms/ = hexademical representation
+of the value with <tt/deg, min, sec/.
+
+<tscreen><verb>
+struct Angle {
+  double rad;
+  double grad;
+  double deg;
+  struct hms dms;
+}
+</verb></tscreen>
+
+
+<sect1> Routines
+<p>
+<sect2> afromrad
+<p>
+<tscreen><verb>
+struct Angle afromrad (double angrad)
+</verb></tscreen>
+<p>Fills all fields of the struct <tt/Angle/, given an angle <tt/angrad/ 
+in radians.
+
+<sect2> afromdeg
+<p>
+<tscreen><verb>
+struct Angle afromdeg (double angdeg)
+</verb></tscreen>
+<p>Fills all fields of the struct <tt/Angle/, given an angle <tt/angdeg/ 
+in degree (decimal value).
+
+
+<sect2> afromgrad
+<p>
+<tscreen><verb>
+struct Angle afromgrad(double anggrad)
+</verb></tscreen>
+<p>Fills all fields of the struct <tt/Angle/, given an angle <tt/anggrad/ 
+in grad.
+
+
+<sect2>afromdmsverb 
+<p>
+<tscreen><verb>
+struct Angle afromdmsverb(int degrees, int minutes, double seconds)
+</verb></tscreen>
+<p>Fills all fields of the struct <tt/Angle/, given an angle
+in hexadecimal representation (<tt/degrees, minutes/ <tt/seconds/).
+
+<sect2>afromdms
+<p>
+<tscreen><verb>
+struct Angle afromdms(struct hms mydms)
+</verb></tscreen>
+<p>Same as <tt/afromdmsverb/.<tt/degrees, minutes/ <tt/seconds/)
+are fields of <tt/hms/.
+
+<sect2>afromstr 
+<p>
+<tscreen><verb>
+struct Angle afromstr(char *s)
+</verb></tscreen>
+<p>Fills all fields of the struct <tt/Angle/ given a string.
+The units of the angle is supposed to be degrees.  The
+string may contain the angle in decimal representation
+or in hexadecimal representation. 
+<p>Example of valid strings:<tt/"46.5069"/ or 
+<tt/"46o30m25.64"/ or <tt/"46d30m25.64"/
+
+<sect2> admsstr
+<p>
+<tscreen><verb>
+char * admsstr (const struct Angle a, const int mode)
+</verb></tscreen>
+<p>Converts a <tt/struct Angle/ to a string, based on
+its hexadecimal representation. The <tt/mode/ parameter
+defimes the following formats :
+<p>
+<tscreen><verb>
+mode = 0    returned string = "46 30 25.643346789"
+mode = 1    returned string = "46d30m25.643346789"
+mode = 2    returned string = "46\t30\t25.643346789"
+</verb></tscreen>
+
+
+
+

@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+#
+
+cd ../sgml
+if [ ! -d ../html ]; then
+  mkdir ../html
+fi
+sgml2html -s 1 DOCcommon.sgml
+mv -f *.html ../html
+#for file in `ls ../html/*.html`; do
+#  sed 's/<H3>/<H4>/g' $file >../html/scratch
+#  sed 's/<\/H3>/<\/H4>/g' ../html/scratch >$file
+#  sed 's/<H2>/<H3>/g' $file >../html/scratch
+#  sed 's/<\/H2>/<\/H3>/g' ../html/scratch >$file
+#  rm ../html/scratch
+#done;
+cd ../bin
+

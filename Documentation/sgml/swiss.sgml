@@ -1,0 +1,97 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/swiss.sgml,v $
+#
+#   $Id: swiss.sgml,v 1.2 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: swiss.sgml,v $
+#   Revision 1.2  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.1  1998/05/29 12:01:03  cocard
+#   Initial revision
+#
+#
+#
+
+<sect> swiss projection (Revision 1.2 -- 06/05/98)
+
+<p> In this unit functions to transform coordinates from 
+the Bessel ellipsoid to the Swiss military coordinates and the
+vice versa are defined. Swiss Military coordinates are
+projection coordinates based on the Swiss National Projection
+which is a transverse Mercator projection. In addition, their
+origin is shifted from (<tt/0, 0/) to (<tt/milx0 = 200'000, 
+mily0 = 600'000/). For points in Switzerland this leads to 
+positive not overlapping ranges for x and y coordinates.
+
+<p>Only the main transformation functions are descriped in
+this documentation. Additional functions which  
+correspond to intermediate steps in the transformation
+process are available. Consult <tt/swiss.h/ for more details.
+Note that normally you don't need these functions.
+
+<sect1> Transformation Functions
+<p>
+
+<sect2>ch_elltomil
+<p>
+<tscreen><verb>
+int ch_elltomil(double elllat, double elllon, double *milx, double *mily);
+</verb></tscreen>
+
+<p> This function calculates the military coordinates <tt/milx/ and <tt/mily/
+from the ellipsoidal latitude <tt/elllat/ and longitude <tt/elllon/. The
+ellipoidal coordinates must refer to the Swiss Bessel ellipsoid and
+have to be passed in radians. The resulting coordinates <tt/milx/ is the 
+ south-north component and <tt/mily/ the east-west component. Both are returned
+in meters.
+
+<sect2>ch_miltoell
+<p>
+<tscreen><verb>
+int ch_miltoell(double milx, double mily, double *elllat, double *elllon);
+</verb></tscreen>
+
+<p> This function is the counterpart to <tt/ch_elltomil/. It calculates
+the ellipsoidal latitude <tt/elllat/ and  longitude <tt/ellon/ from 
+the military coordinates <tt/milx/ and <tt/mily/. Military coordinates
+are given in meters. Ellipsoidal coordinates refer to the Swiss Bessel
+ellipsoid and are returned in radian. Note that <tt/milx/ corresponds
+to the north-south and <tt/mily/ to the east-west component.
+
+<sect2>ch_e2m
+<p>
+<tscreen><verb>
+int ch_e2m(double elllat, double elllon, 
+	   double *milx, double *mily, 
+	   double *scale, double *merconv)
+</verb></tscreen>
+<p> This function is similar to <tt/ch_elltomil/, but returns to 
+additional values: the scale <tt/scale/ and the convergence of the
+meridian <tt/merconv/ in radians.
+
+<sect2>ch_m2e
+<p>
+<tscreen><verb>
+int ch_m2e(double milx, double mily,
+	   double *elllat, double *elllon,
+	   double *scale, double *merconv)
+</verb></tscreen>
+<p> This function is similar to <tt/ch_miltoell/, but returns to 
+additional values: the scale <tt/scale/ and the convergence of the
+meridian <tt/merconv/ in radians.
+
+<sect2>ch_magnetic_deviation
+<p>
+
+<tscreen><verb>
+double ch_magnetic_deviation (const double milx, const double mily, 
+                              const double year)
+</verb></tscreen>
+<p> This function calculates the magnetic deviation using a simple 
+polynomial developement. The value is dependant on coordinates and
+time given in years. Deviation is returned in radians.

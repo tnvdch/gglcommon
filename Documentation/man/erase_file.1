@@ -1,0 +1,45 @@
+.TH ERASE_FILE 3ggl "11 August 1997" "GGL/IGP ETHZ" "GGL Common Lib"
+.SH NAME
+erase_file \- enhanced file removal
+.SH SYNOPSIS
+.B #include <common/inout.h>
+
+.RB "int " erase_file
+.RI "(FILE *" filename ");"
+.SH DESCRIPTION
+The function
+.B erase_file()
+will erase the file
+.I filename
+when it exists. It is an extension to
+.BR unlink (2)
+by additionally printing a proper error message, when a file could not
+be removed or be found. 
+.SH "RETURN VALUES"
+.B erase_file()
+will return the error code, that it received by calling
+.BR unlink (2).
+.SH ERRORS
+The function will call standard library functions
+that may set
+.IR errno .
+If any called function produces an error, the functions
+will print an appropriate error message to
+.BR stderr .
+.SH CAVEATS
+You have to compile your program using
+.I -lcommon
+as a compiler flag to properly link
+your function to the library.
+.SH AUTHORS
+  (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich:
+.RS
+Etienne Favey <favey@geod.ethz.ch>,
+.RE
+.RS
+Marc Cocard <cocard@geod.ethz.ch>
+.RE
+.SH "SEE ALSO"
+.BR unlink (2),
+.BR remove (3),
+.BR rm (1)

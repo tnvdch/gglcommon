@@ -1,0 +1,197 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/mat3.sgml,v $
+#
+#   $Id: mat3.sgml,v 1.2 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: mat3.sgml,v $
+#   Revision 1.2  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.1  1998/05/29 12:03:04  cocard
+#   Initial revision
+#
+#
+#
+
+<sect> mat3 (Revision 1.1 -- 22/04/98)
+
+<p>The unit <tt/mat3/ regroups routines for vector and matrix operations
+in three dimensional space.
+
+<sect1>Vector operations
+
+<sect2>v3_copy
+<p>
+<tscreen><verb>
+int v3_copy (const double a[3], double b[3])
+</verb></tscreen>
+<p> Copy of vector <tt/a/ to vector <tt/b/.
+
+<sect2>v3_add
+<p>
+<tscreen><verb>
+int v3_add (const double a[3], const double b[3], double c[3])
+</verb></tscreen>
+<p>Vector addition (<tt/c = a + b/).
+
+<sect2>v3_sub
+<p>
+<tscreen><verb>
+int v3_sub (const double a[3], const double b[3], double c[3])
+</verb></tscreen>
+<p>Vector substraction (<tt/c = a - b/).
+
+<sect2>v3_multx
+<p>
+<tscreen><verb>
+int v3_multx (const double a[3], const double x, double c[3])
+</verb></tscreen>
+<p> Multiplication of a vector with a scalar. (<tt/c = x*a/)
+
+<sect2>v3_norm
+<p>
+<tscreen><verb>
+int v3_norm (const double a[3], double c[3])
+</verb></tscreen>
+<p>Normation of a vector (<tt/c =norm(a)/)
+
+<sect2>v3_length
+<p>
+<tscreen><verb>
+double v3_length (const double a[3])
+</verb></tscreen>
+<p>Return value is the length of the vector <tt/a/.
+
+<sect2>v3_scalar
+<p>
+<tscreen><verb>
+double v3_scalar (const double a[3], const double b[3])
+</verb></tscreen>
+<p> Return value is the scalar product of vector <tt/a/ and vector <tt/b/.
+
+<sect2>v3_cross
+<p>
+<tscreen><verb>
+int v3_cross (const double a[3], const double b[3], double c[3])
+</verb></tscreen>
+<p>Cross product of 2 vectors. (<tt/c = a x b/).
+
+
+<sect1>Matrix operations
+
+<sect2>m3_unit
+<p>
+<tscreen><verb>
+int m3_unit (double a[3][3])
+</verb></tscreen>
+<p> Filling of  matrix <tt/m/ as unit matrix. (<tt/1/ on diagonal <tt/0/ elsewhere).
+
+<sect2>m3_copy
+<p>
+<tscreen><verb>
+int m3_copy (const double a[3][3], double c[3][3])
+</verb></tscreen>
+<p> Copy of matrix <tt/a/ to matrix <tt/c/.
+
+<sect2>m3_trans
+<p>
+<tscreen><verb>
+int m3_trans (const double a[3][3], double c[3][3])
+</verb></tscreen>
+<p>Transposition of  matrix (<tt/c = a(transposed)/).
+
+<sect2>m3_write
+<p>
+<tscreen><verb>
+void m3_write (FILE *fpout, const double a[3][3])
+</verb></tscreen>
+<p>Writes matrix <tt/a/ to file <tt/fpout/.
+
+<sect2> m3_add
+<p>
+<tscreen><verb>
+int m3_add (const double a[3][3], const double b[3][3], double c[3][3])
+</verb></tscreen>
+<p> Matrix addition (<tt/c =  a + b/).
+
+<sect2> m3_sub
+<p>
+<tscreen><verb>
+int m3_sub (const double a[3][3], const double b[3][3], double c[3][3])
+</verb></tscreen>
+<p>Matrix substraction (<tt/c =  a - b/).
+
+<sect2>m3v3_mult
+<p>
+<tscreen><verb>
+int m3v3_mult (const double a[3][3], const double b[3], double c[3])
+</verb></tscreen>
+<p>Multiplication of a matrix with a vector. (<tt/c = a * b/).
+
+<sect2>m3m3_mult
+<p>
+<tscreen><verb>
+int m3m3_mult (const double a[3][3], const double b[3][3], double c[3][3])
+</verb></tscreen>
+<p>Multiplication of a matrix with a matrix. (<tt/c = a * b/).
+
+<sect2>m3_inv
+<p>
+<tscreen><verb>
+int m3_inv (double a[3][3])
+</verb></tscreen>
+<p> Inversion of a matrix. Matrix <tt/m/ is overwritten by its
+inverse. A return value different from <tt/0/ indicates failure of inversion.
+
+
+<sect1>Rotation matrices
+
+<p>In all following routines rotations are considered to be right hand 
+rotations of the reference frame. The approach here is that physically a vector 
+is considered to remain unchanged, only the decomposition of this vector changes 
+when the coordinate frame is rotated. (Note that if you prefer to look at rotations
+as rotations of a moving vector with respect to a  fixed reference frame than 
+all routines are dealing with left hand rotations).
+
+<sect2>rot_getmat
+<p>
+<tscreen><verb>
+int rot_getmat (const int axis, const double angle, double rotmat[3][3])
+</verb></tscreen>
+<p>This function determines the rotation matrix <tt/rotmat/ given the rotation
+axis <tt/axis/ (1 = rotation around x, 2 =  rotation around y, 3 = rotation 
+around z) and the rotation angle <tt/angle/ in radian.
+
+<sect2>rotate
+<p>
+<tscreen><verb>
+int rotate (const double x1[3], const int axis, const double angle, double x2[3])
+</verb></tscreen>
+<p>This function performs a rotation of a vector <tt/x1/ around the axis <tt/axis/
+ (1 = rotation around x, 2 =  rotation around y, 3 = rotation around z). The rotation
+angle <tt/angle/ is given in radian. Result vector is <tt/x2/. Here an example : 
+<tscreen><verb> 
+  input     x1=(1, 0, 0) 
+  rotation  rotate (x1, 3, PI/2, x2)
+  output    x2=(0,-1, 0)
+</verb></tscreen>
+
+<sect2>rotvec_to_mat
+<p>
+<tscreen><verb>
+int rotvec_to_mat (const double rotvec[3], const double angle, double rotmat[3][3])
+</verb></tscreen>
+<p>this function determines the rotation matrix <tt/rotmat/ given the rotation
+axis as a unit vector <tt/rotvec/ and the rotation angle <tt/angle/ in radians.
+
+<sect2>rotmat_to_vec
+<p>
+<tscreen><verb>
+int rotmat_to_vec (const double rotmat[3][3], double rotvec[3], double *angle)
+</verb></tscreen>
+<p>this function determines the rotation vector <tt/rotmat/ given the rotation
+axis as a unit vector <tt/rotvec/ and the rotation angle <tt/angle/ in radians.

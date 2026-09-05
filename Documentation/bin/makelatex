@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+#
+
+cd ../sgml
+if [ ! -d ../latex ]; then
+   mkdir ../latex
+fi
+for file in `ls DOC*.sgml`; do
+  file0=`basename $file .sgml`
+  sgml2latex $file0.sgml
+  dvips $file0.dvi
+  mv -vf $file0.tex ../latex
+  mv -vf $file0.ps ../latex
+  mv -vf $file0.dvi ../latex
+done
+cd ../bin
+

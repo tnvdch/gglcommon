@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+#
+# $1 = welcher teil
+SGMLFILE=DOC$1
+BASE=`basename $1 .sgml`
+
+../bin/makesgml
+sgml2latex --output=ps $SGMLFILE
+mv DOC$BASE.ps ../latex/
+

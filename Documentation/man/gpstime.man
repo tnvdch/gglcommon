@@ -1,0 +1,19 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH GPSTIME 1 "JULY 1997" Linux "User Manuals"
+.SH NAME
+gpstime \- calculate GPS day and week
+.SH SYNOPSIS
+.B gpstime 
+.SH DESCRIPTION
+.B gpstime
+calculates conversions between GPS day and week, day-of-year, modified
+julian date, and common day, month, year format. The program is
+interactive and should be self-explanatory.
+.SH BUGS
+The program should be less picky about the way one enters time
+and checking errors in a better way.
+.SH AUTHOR
+Marc Cocard <cocard@geod.ethz.ch>
+

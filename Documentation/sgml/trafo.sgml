@@ -1,0 +1,294 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/trafo.sgml,v $
+#
+#   $Id: trafo.sgml,v 1.3 1999/01/07 12:58:18 cocard Exp $
+#
+#   $Log: trafo.sgml,v $
+#   Revision 1.3  1999/01/07 12:58:18  cocard
+#   *** empty log message ***
+#
+#   Revision 1.2  1998/07/01 15:17:21  cocard
+#   m_separate_sym added
+#
+#   Revision 1.1  1998/05/29 11:59:28  cocard
+#   Initial revision
+#
+#
+#
+
+<sect>trafo (Revision 1.1 -- 22/04/1998)
+
+<p> The unit <tt/trafo/ regroups transformation routines commonly used in
+geodesy. Additional transformation routines can be found in <tt/crdtrans/.
+
+<sect1>Trafo Configuration File
+
+<p> For many transformation routines defined in <tt/trafo/ and <tt/crdtrans/
+and for all related applications a configuration file is needed. 
+When installing the software, you must export the environment 
+variable <tt/TRAFOCONF/ to point at this file for the routines to work.
+
+<p> The structure of the configuration file is line-oriented. 
+Every line must start with one of the following keywords: 
+<tt/formtype/, <tt/frame/, <tt/rate/, <tt/ellipsoid/, or <tt/geoid/. 
+Blank lines or lines starting with <tt/#/ are ignored. 
+
+<sect2> formtype
+
+<p> <tt/formtype/ associates an abbreviation <tt/identifier/ to a representation
+of a set of 3 dimesional coordinates. The syntax is:
+<p>
+<tscreen>
+<bf/formtype/ identifier coord1 coord2 coord3
+</tscreen>
+
+<p> where <tt/identifier/ is an arbitrarly chosen name for the coordinate type. Possible
+coordinates types are: <tt/x, y, z, n, e, h, lat, lon, rlat, rlon, glat, glon, dmslat,
+dmslon/.
+<p> with:
+<p><tt/x, y, z/: geocentric coordinates
+<p><tt/n, e, h/: Northing Easting height
+<p><tt/lat, lon/: latitude longitude (in degree)
+<p><tt/rlat, rlon/: latitude longitude (in radian)
+<p><tt/glat, glon/: latitude longitude (in grad)
+<p><tt/dmslat, dmslon/:  latitude longitude (in deg:min:sec)
+
+
+<p>Examples of <tt/formtype/ definitions from configuration file:
+<tscreen><verb>
+formtype xyz x y z
+formtype llh lat lon h
+formtype swissyxh e n h
+</verb></tscreen>
+
+<sect2>frame
+
+<p> <tt/frame/ defines a 7-parameter transformation between two cartesian
+reference frames. 
+
+<tscreen>
+<bf/frame/ source target dx dy dz scale angletype alpha beta gamma epoch
+</tscreen>
+
+<p> where <tt/source/ is the name of a reference frame 1,  
+<tt/target/ is the name of  a reference frame 2. 
+The 7-parameter transformation is given by 3 translations 
+<tt/dx, dy/ and <tt/dz/ (in meters), a scale factor <tt/scale/ (in ppm) and
+3 rotations: <tt/alpha/ (around the x-axis), <tt/beta/ (around the y-axis) and
+<tt/gamma/ (around the z-axis). The unit of all three rotation angles is defined
+by the field <tt/angletype/, which must be one of the following 3 items: 
+<tt/deg/ for degree, <tt/''/ for arcseconds, or <tt/rad/ for radians. The last
+parameter <tt/epoch/ defines the reference epoch of  the transformation set
+ and is given in years (decimal). It is used in connection with  <tt/rate/.
+Applying this transformation to the coordinates of a point given in reference
+frame 1 yields its coordinates with respect to reference frame 2. 
+
+P2 = HIER FEHLT NOCH EINE FORMEL !!!!
+
+Examples of <tt/frame/ definitions from configuration file:
+<tscreen><verb>
+frame ch1903+ etrf 674.374 15.056 405.346 0.0 deg 0.0 0.0 0.0 0.0
+frame itrf94 itrf92 0.008 0.002 -0.008 -0.0008 cc 0.0 0.0 0.0 0.0
+frame etrf wgs84 0.055 -0.541 -0.185 -0.014 cc 0.057 -0.001 0.022 0.0
+</verb></tscreen>
+
+<sect2>rate
+
+<p> <tt/rate/ defines the temporal change of a 7 parameter transformation 
+as defined by <tt/frame/. The parameters are given in the corresponding unit
+per year.
+
+<tscreen>
+<bf/rate/  source target dx-dot dy-dot dz-dot scale-dot angletype alpha-dot beta-dot gamma-dot
+</tscreen>
+
+<p> If <tt/rate/ is defined, they are used in conjunction with <tt/frame/
+to calculate linearly the transformation set for the required epoch.
+ <tt/Pi(t) = Pi(t0) + Pi-dot*(t-t0)/
+<p>where t0 corresponds to the field <tt/epoch/ of <tt/frame/
+<tt/Pi(t0)/ represents one of the 7 parameters from <tt/frame/, 
+<tt/Pi-dot/ its corresponding rate from <tt/rate/. <tt/t/ is the required epoch. 
+
+<p>
+Example of <tt/rate/ definition from configuration file:
+<tscreen><verb>
+frame itrf93 etrf 0.019 0.053 -0.021 0.0 cc 0.0 0.0 0.0 1989.0
+rate itrf93 etrf 0.0 0.0 0.0 0.0 '' -0.00032 -0.00078 0.00067
+</verb></tscreen>
+
+<sect2>ellipsoid
+
+<p> The next keyword <tt/ellipsoid/ allows to define ellipoid parameter in the
+following simple way.
+
+<tscreen>
+<bf/ellipsoid/ identifier  major-axis  excentricity_squared
+</tscreen>
+
+<p> Examples of <tt/ellipsoid/ definitions from configuration file:
+<tscreen><verb>
+ellipsoid sphere1 1.000 0.0
+ellipsoid sphere 6378137.000 0.0
+ellipsoid wgs84 6378137.000 0.00669438
+ellipsoid grs80 6378137.000 0.00669438002290079
+ellipsoid bessel 6377397.155 0.006674372230614
+</verb></tscreen>
+
+<sect2>geoid
+
+<p> For the conversion of ellipsoidal heights to geoid heights, grid files
+containing the geoid undulation can be defined using the keyword <tt/geoid/:
+
+<tscreen>
+<bf/geoid/ identifier coord1 coord2 gridformat (filename || filenumber)
+</tscreen>
+
+<p> 
+<tt/coord1/ and <tt/coord2/ define the type of the x and y coordinates of the
+grid mesh. <tt/gridformat/ indicates the type of grid. At the moment
+the following 2 types are supported ( <tt/dsaa/ = surfer grid in ASCII
+format  and <tt/gmt/ = gmt format). Depending of the format either
+a <tt/filename/ for <tt/dsaa/ or a <tt/filenumber/ for <tt/gmt/ has
+to be provided.
+
+<p> Examples of <tt/geoid/ definitions from configuration file:
+
+<tscreen><verb>
+geoid gurtner e n dsaa /home/favey/project/geoid.grd
+geoid world lon lat gmt 100
+</verb></tscreen>
+
+
+<sect1>Type definitions
+<p>
+
+<sect2>frameread and frameconv
+<p>
+<tscreen><verb>
+struct frameread {
+	int fwd;             /* sign for forward or reverse conversion */
+	double ref_epoch;    /* reference epoch in year */
+	double dx[3];	     /* translation in [m] */
+	double scale;	     /* scale - 1 in [ppm] */
+	double rot[3];	     /* small rotation elements [rad] */
+	double ddx[3];       /* rates of translation in [m/year] */
+	double dscale;	     /* rates of scale in [ppm/year] */
+	double drot[3];      /* rates of rotation [rad/year] */
+}
+
+struct frameconv {
+	int fwd;             /* sign for forward or reverse conversion */
+	double scale;        /* scale - 1 in [ppm] */
+	double rm[3][3];     /* rotation matrix */
+	double dx[3];        /* translation vector */
+}
+</verb></tscreen>
+
+<sect2> ellipsoid
+<p>
+<tscreen><verb>
+struct ellipsoid {
+        double a;            /* major axis of ellipsoid in meter */
+        double e2;           /* square value of excentricity */
+}
+</verb></tscreen>
+
+<sect1>Routines for Parsing Configuration File
+
+<sect2>select_formtype
+<p>
+<tscreen><verb>
+int select_formtype (const char *formtype, int ft_type[3], int ft_cols[3])
+</verb></tscreen>
+
+<p>selects <tt/formtype/ for input. (see configuration file for more information)
+
+<sect2>select_frameconv
+<p>
+<tscreen><verb>
+struct frameconv * select_frameconv (const char *source, const double inepoch, 
+                                     const char *target, const double outepoch)
+</verb></tscreen>
+<p> Selects <tt/frame/ conversion parameters from file returns pointer to 
+struct or <tt/NULL/ upon failure free struct with free(3) after finishing using it.
+
+<sect2>select_ellipsoid
+<p>
+<tscreen><verb>
+struct ellipsoid * select_ellipsoid (const char *ellstr)
+</verb></tscreen>
+
+<p> Selects ellipsoid from configuration file. Returns pointer to struct or 
+<tt/NULL/ upon failure. Free struct with free(3) after finishing using it.
+
+
+<sect1>Routines
+<p>
+
+<sect2>frame_conv
+<p>
+<tscreen><verb>
+int frame_conv (struct frameconv *fcp, double source[3], double target[3])
+</verb></tscreen>
+<p> transforms the coordinates <tt/source/ from reference frame 1 to reference
+frame 2, based on the transformation parameters <tt/fcp/.
+
+<sect2>cartesian_to_spherical
+<p>
+<tscreen><verb>
+void cartesian_to_spherical(double xyz[3], 
+			    double *lat, double *lon, double *radius)
+
+</verb></tscreen>
+<p> Converts cartesian coordinates <tt/xyz/ to spherical latitude (<tt/lat/),
+longitude (<tt/lon/), and distance (<tt/radius/). (all angles in radians).
+
+<sect2>spherical_to_cartesian
+<p>
+<tscreen><verb>
+void spherical_to_cartesian(double lat, double lon, double radius, 
+			    double xyz[3])
+</verb></tscreen>
+<p> Converts cartesianspherical coordinates given by latitude (<tt/lat/),
+longitude (<tt/lon/), and distance (<tt/radius/) to cartesian coordinates
+(all angles in radians).
+
+
+void spherical_to_cartesian(
+			    double lat, 
+			    double lon, 
+			    double radius, 
+			    double xyz[3]);
+
+/
+
+<sect2>xyz_to_llh
+<p>
+<tscreen><verb>
+int xyz_to_llh (const struct ellipsoid ell, const double xyz[3], 
+                double *lat, double *lon, double *h);
+</verb></tscreen>
+<p> Converts geocentric coordinates <tt/xyz/ to ellipoidal latitude (<tt/lat/),
+longitude (<tt/lon/), and ellipsoidal height (<tt/h/). The definition of 
+the ellipsoidal parameters is given by <tt/ell/. (all values in meters or
+radians).
+
+<sect2>llh_to_xyz
+<p>
+<tscreen><verb>
+int llh_to_xyz (const struct ellipsoid ell, const double lat, const double lon, 
+                const double h, double xyz[3]);
+</verb></tscreen>
+<p> Converts ellipoidal coordinates (<tt/lat/, <tt/lon/, and <tt/h/ to the
+corresponding Cartesian coordinates<tt/xyz/. The definition of 
+the ellipsoidal parameters is given by <tt/ell/. (all values in meters or
+radians).
+
+
+
+
+

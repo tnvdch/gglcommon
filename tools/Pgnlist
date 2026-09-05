@@ -1,0 +1,12 @@
+PGNS=\
+  dx2cal \
+  vectrotm \
+  vectquat \
+  mknav \
+  isdos \
+  readsurf \
+  mkline \
+  rayp \
+  fft1d \
+
+#  ppswiss \

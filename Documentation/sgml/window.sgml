@@ -1,0 +1,135 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/window.sgml,v $
+#
+#   $Id: window.sgml,v 1.3 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: window.sgml,v $
+#   Revision 1.3  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.2  2000/02/24 13:44:18  favey
+#   schreiben
+#
+#   Revision 1.1  1998/05/29 12:00:53  cocard
+#   Initial revision
+#
+#
+#
+
+<sect> window (Revision 1.18 -- 08/09/99)
+
+<p>This section is only in the process of being written, don't look at it
+as complete!
+
+The unit <tt/window/ provides functions to process a time-sorted
+file. An arbitrary number of consecutive data records can be picked
+out (data window) and stored in the matrix <tt/m/ for further calculations.
+
+<sect1> Window Data Structure
+
+<sect2> struct data_window
+<label id="stuct-data-window">
+<p>Structure to hold file pointer, matrix pointer, time values, etc.
+<p>
+<tscreen><verb>
+struct data_window {
+        double mid_time;        /* mid time of actual window */
+        double tail_time;       /* start time of actual window */
+        double head_time;       /* end time of actual window */
+        double halfwinsize;     /* deltatime = (endtime - starttime)/2 */
+        int bufsize;            /* maximal number of rows for a window */
+        int valid_count;        /* actual number of rows */
+        FILE *fpdata;           /* file pointer to data file */
+        char *fname;            /* file name of data file */
+        int ispipe;             /* flag whether fpdata is a pipe */
+        struct matrix *m;       /* struct containing the data */
+</verb></tscreen>
+
+<p>The variables, which must be filled up, are explained later on.
+
+<sect1>Window functions
+<sect2>init_data_window
+<p>
+<tscreen><verb>
+int init_data_window(
+        const double half_window_size,
+        const int buffer_size,
+        const int numcols,
+        const char *datafname,
+        struct data_window *w,
+        int (*read_new_element)(FILE *fpin, struct matrix *m, int row))
+</verb></tscreen>
+<p>
+The variable <tt/half_window_size/ defines the size of the window,
+concretely twice the specified value. The unit of the specified value
+must be the same as in the data file, e.g. if the data file is sorted
+by seconds, the unit for <tt/half_window_size/ must also be seconds.
+The variables <tt/buffer_size/ and <tt/numcols/ define the size of the
+<tt/m/-Matrix. The variable <tt/buffer_size/ holds the number of rows,
+which is some more than the number of data records in the spezified
+window, and the variable <tt/numcols/ holds the number of columns,
+which is the number of different parts of one data record. The
+variable <tt/datafname/ contains the name of the data file.
+If the initialization was successful, the return value is 0, any other
+return value can be handed over to the <tt/window_err/ function, which
+prompts an appropriate error message.
+
+<sect2>update_data_window
+<p>
+<tscreen><verb>
+int update_data_window(
+        struct data_window *w,
+        const double new_time,
+        int (*read_new_element)(FILE *fpin, struct matrix *m, int row))
+ </verb></tscreen>
+<p>    
+This function moves the center of the data window on to <tt/new_time/,
+thus the data window extends now from <tt/new_time/ - <tt/half_window-size/ to
+<tt/new_time/ + <tt/half_window_size/. The return value contains the
+number of data records, which the window was shifted, so a return value
+greater or equal zero is normal, a return value smaller zero must be
+handed over to the <tt/window_err/ function, as it indicates, that
+something went wrong.
+
+
+<sect2>eliminate_data_window
+<p>
+<tscreen><verb>
+void eliminate_data_window (struct data_window *w)
+</verb></tscreen>
+<p>   
+This function eliminates the window structure and frees the allocated memory.
+
+<sect2>time_index_data_window
+<p>
+<tscreen><verb>
+int time_index_data_window(struct data_window *w, double t)
+</verb></tscreen>
+<p>   
+This function returns the rownumber of the matrix <tt/m/, which
+corresponds to the time <tt/t/.
+
+<sect2>print_data_window
+<p>
+<tscreen><verb>
+void print_data_window (FILE *fpout, struct data_window *w, int fmt1, int fmt2)
+</verb></tscreen>
+<p>   
+This function prints the current values of <tt/mid_time/,
+<tt/tail_time/, <tt/head_time/, <tt/halfwinsize/, <tt/bufsize/, and
+<tt/valid_count/ of the <tt/data_window/. This may be useful for
+debugging.
+
+<sect2>window_err
+<p>
+<tscreen><verb>
+void window_err (const int errval, const char* fname)
+</verb></tscreen>
+<p>   
+This function prompts an appropriate error message to <tt/stderr/ for
+all unusual return values produced by the window functions and stops
+the program. 

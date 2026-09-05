@@ -1,0 +1,25 @@
+# 
+#   PROJECT: GGL Common Library (Documentation)
+#
+#   COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab, ETH Zurich
+# 
+#   FILE: $Source: /mnt/molnya00/linux/gglutils/src/RCS/common/Documentation/sgml/parse.sgml,v $
+#
+#   $Id: parse.sgml,v 1.2 2000/04/17 16:28:18 favey Exp $
+#
+#   $Log: parse.sgml,v $
+#   Revision 1.2  2000/04/17 16:28:18  favey
+#   by Marcel Sutter
+#
+#   Revision 1.1  1998/05/29 12:00:27  cocard
+#   Initial revision
+#
+#
+#
+<sect> parse
+<p>
+To see the online help, type
+<tscreen>
+grep " \*% " < .../libsrc/parse.c | cut -c 5- | nroff -man | less -is
+</tscreen>
+

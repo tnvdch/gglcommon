@@ -9,6 +9,14 @@
 #
 # =================================================================== 
 
+VERBOSE=0
+ifeq ($(VERBOSE),1)
+V=
+else
+V=@
+endif
+
+
 include ./VERSION
 
 COMPILINFO=compiled `date` by `whoami` at `uname -n`
@@ -25,7 +33,11 @@ CC=gcc
 EXT=
 
 # To enable Debugging Checks in matcalc, define DEVEL_MAT_DEBUG !
-CFLAGS=-O -g -Wall -DLIBCOMP="\"[ $(COMPILINFO) ]"\" -DLIBVER='"[ GGL Common Library '$(LIBVERSION)' ]"' -D_GNU_SOURCE -DDEVEL_MAT_DEBUG
+CFLAGS=-O -g -Wall -DLIBCOMP="\"[ $(COMPILINFO) ]"\" -DLIBVER='"[ GGL Common Library '$(LIBVERSION)' ]"' -D_GNU_SOURCE -DDEVEL_MAT_DEBUG -fPIC
+
+ifeq ($(M32),1)
+CFLAGS += -m32
+endif
 
 #
 # where the RCS Repository is
@@ -66,68 +78,47 @@ default :
 #------------------------------  check-in check-out
 
 co_lib : 
-	touch libsrc/.depend
-	$(MAKE) -C libsrc co
+	$(V)touch libsrc/.depend
+	$(V)$(MAKE) -C libsrc co
 
 coro_lib :
-	touch libsrc/.depend
-	$(MAKE) -C libsrc coro
+	$(V)touch libsrc/.depend
+	$(V)$(MAKE) -C libsrc coro
 
 ci_lib :
-	touch libsrc/.depend
-	$(MAKE) -C libsrc ci
+	$(V)touch libsrc/.depend
+	$(V)$(MAKE) -C libsrc ci
 
 co_doc : 
-	$(MAKE) -C Documentation/sgml co
+	$(V)$(MAKE) -C Documentation/sgml co
 
 coro_doc :
-	$(MAKE) -C Documentation/sgml coro
+	$(V)$(MAKE) -C Documentation/sgml coro
 
 ci_doc :
-	$(MAKE) -C Documentation/sgml ci
+	$(V)$(MAKE) -C Documentation/sgml ci
 
 co_apps :
-	$(MAKE) -C appssrc co
+	$(V)$(MAKE) -C appssrc co
 
 coro_apps :
-	$(MAKE) -C appssrc coro
+	$(V)$(MAKE) -C appssrc coro
 
 ci_apps:
-	$(MAKE) -C appssrc ci
-
-coro :  coro_lib coro_apps coro_doc
-	-co -r $(REPOSITORY)/Makefile,v $(REPOSITORY)/Makefile++,v \
-	$(REPOSITORY)/VERSION,v $(REPOSITORY)/sample.c,v \
-	$(REPOSITORY)/trafo.conf,v $(REPOSITORY)/README.unix,v \
-	$(REPOSITORY)/ChangeLog,v $(REPOSITORY)/BUGS,v \
-	$(REPOSITORY)/COPYING,v 
-
-co :  co_lib co_apps co_doc
-	-co -l $(REPOSITORY)/Makefile,v $(REPOSITORY)/Makefile++,v \
-        $(REPOSITORY)/VERSION,v $(REPOSITORY)/sample.c,v \
-        $(REPOSITORY)/trafo.conf,v $(REPOSITORY)/README.unix,v \
-        $(REPOSITORY)/ChangeLog,v $(REPOSITORY)/BUGS,v \
-	$(REPOSITORY)/COPYING,v
-
-ci : ci_lib ci_apps ci_doc
-	-ci -u -u $(REPOSITORY)/Makefile,v $(REPOSITORY)/Makefile++,v \
-        $(REPOSITORY)/VERSION,v $(REPOSITORY)/sample.c,v \
-        $(REPOSITORY)/trafo.conf,v $(REPOSITORY)/README.unix,v \
-        $(REPOSITORY)/ChangeLog,v $(REPOSITORY)/BUGS,v \
-	$(REPOSITORY)/COPYING,v
+	$(V)$(MAKE) -C appssrc ci
 
 #------------------------------  make liberary
 
 include libsrc/Objlist
 
 dep :
-	$(MAKE) -C libsrc dep
+	$(V)$(MAKE) -C libsrc dep
 
 lib : dep
-	$(MAKE) -C libsrc lib
+	$(V)$(MAKE) -C libsrc lib
 
 instlib : dep lib
-	$(MAKE) -C libsrc install
+	$(V)$(MAKE) -C libsrc install
 
 
 #------------------------------  make apps
@@ -135,44 +126,44 @@ instlib : dep lib
 include appssrc/Pgnlist
 
 % :
-	$(MAKE) -C appssrc SV="`date` `hostname -s` `whoami`" $@
+	$(V)$(MAKE) -C appssrc SV="`date` `hostname -s` `whoami`" $@
 
 apps : lib
-	$(MAKE) -C appssrc SV="`date` `hostname -s` `whoami`" $(PGNS)
+	$(V)$(MAKE) -C appssrc SV="`date` `hostname -s` `whoami`" $(PGNS)
 
 instapps :  apps 
-	if [ ! -d $(INST_PGN_DIR) ] ; then mkdir $(INST_PGN_DIR) ; fi
-	$(foreach pgn, $(PGNS),install -m 0771 appssrc/$(pgn) $(INST_PGN_DIR)/$(pgn) && ) echo ""
+	$(V)if [ ! -d $(INST_PGN_DIR) ] ; then mkdir $(INST_PGN_DIR) ; fi
+	$(V)$(foreach pgn, $(PGNS),install -m 0771 appssrc/$(pgn) $(INST_PGN_DIR)/$(pgn) && ) echo ""
 
 install : instlib instapps
 
 #------------------------------  create documentation
 
 doc :
-	if [ ! -d Documentation/bin ] ; then mkdir Documentation/bin ; fi
-	cd Documentation/bin; tar xf $(REPOSITORY)/Documentation/bin/pgn.tar; makedoc
+	$(V)if [ ! -d Documentation/bin ] ; then mkdir Documentation/bin ; fi
+	$(V)cd Documentation/bin; tar xf $(REPOSITORY)/Documentation/bin/pgn.tar; makedoc
 
 #------------------------------  cleaning
 
 cleandep :
-	$(MAKE) -C libsrc cleandep
+	$(V)$(MAKE) -C libsrc cleandep VERBOSE=$(VERBOSE)
 
 cleanlib :
-	$(MAKE) -C libsrc clean
+	$(V)$(MAKE) -C libsrc clean VERBOSE=$(VERBOSE)
 
 cleanapps :
-	$(MAKE) -C appssrc clean
+	$(V)$(MAKE) -C appssrc clean VERBOSE=$(VERBOSE)
 
 cleandoc :
-	-rm -f Documentation/{latex,html}/*
-	-rm -f Documentation/sgml/DOC*.sgml
+	$(V)rm -f Documentation/{latex,html}/*
+	$(V)rm -f Documentation/sgml/DOC*.sgml
 
 clean : cleanlib cleanapps cleandoc
 
 pu : 
-	-rm -f *~ *.bak *%
-	$(MAKE) -C appssrc pu
-	$(MAKE) -C libsrc pu
+	$(V)rm -f *~ *.bak *%
+	$(V)$(MAKE) -C appssrc pu
+	$(V)$(MAKE) -C libsrc pu
 
 #
 # $Log: Makefile,v $

@@ -14,7 +14,7 @@
  *		ETH - Hoenggerberg
  *		CH - 8093 Zurich
  *
- *  $Id: closestpair.c,v 1.5 1999/09/08 09:32:31 favey Exp $
+ *  $Id: closestpair.c,v 1.5 1999/09/08 09:32:31 favey Exp favey $
  *
  *  Creation Date: 11/1995
  *
@@ -43,7 +43,9 @@
  *              to the Free Software Foundation, Inc., 675 Mass Ave,
  *              Cambridge, MA 02139, USA.
  *
- * $Log: closestpair.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/closestpair.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.5  1999/09/08 09:32:31  favey
  * copyright info added
  *

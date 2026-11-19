@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: global.c,v 1.8 2001/08/31 12:08:24 favey Exp $
+ * $Id: global.c,v 1.7 2000/07/25 13:18:46 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -30,10 +30,9 @@
  *   HISTORY: dd-mm-yyyy  --  description
  *            
  *            30-10-1998  --  created global
- * $Log: global.c,v $
- * Revision 1.8  2001/08/31 12:08:24  favey
- * cygwin adaptions
- *
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/global.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.7  2000/07/25 13:18:46  favey
  * introducing OS_AIX
  *

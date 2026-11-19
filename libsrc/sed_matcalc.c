@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: sed_matcalc.c,v 1.15 2001/08/31 08:28:41 cocard Exp $
+ * $Id: sed_matcalc.c,v 1.15 2001/08/31 08:28:41 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -28,7 +28,9 @@
  *            Favey Etienne   <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: sed_matcalc.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sed_matcalc.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.15  2001/08/31 08:28:41  cocard
  * *** empty log message ***
  *
@@ -107,7 +109,7 @@
 #include "SED_Tmatcalc.h"
 
 /*****************************************************************/
-void const SED_Tm_WriteMatInfo (struct SED_longTmatrix *m, int i)
+void /*const*/ SED_Tm_WriteMatInfo (struct SED_longTmatrix *m, int i)
 {
       fprintf (stderr, "SED_Tmatcalc: SED_longTmatrix %d <%s>\n", 
 	       i, m->name==NULL?"NoName":m->name);
@@ -139,7 +141,7 @@ void SED_Tm_error (
 
 
 /*****************************************************************/
-struct SED_longTmatrix * const SED_Tm_get (int row, int col)
+struct SED_longTmatrix * /*const*/ SED_Tm_get (int row, int col)
 {
   struct SED_longTmatrix *m;
   SED_MATTYPE *ptmp;
@@ -147,24 +149,35 @@ struct SED_longTmatrix * const SED_Tm_get (int row, int col)
 
   m = (struct SED_longTmatrix *) malloc (sizeof(struct SED_longTmatrix));
   if ( m == NULL )
-    {
-#ifdef DEVEL_MAT_DEBUG
-      SED_Tm_error ("SED_Tm_init: virtual memory exhausted",
-	       NULL, NULL, NULL, NULL, NULL);
-#endif
-      return NULL;
-    }
+  {
+ #ifdef DEVEL_MAT_DEBUG
+       SED_Tm_error ("SED_Tm_init: virtual memory exhausted",
+ 	       NULL, NULL, NULL, NULL, NULL);
+ #endif
+       return NULL;
+  }
 
   m->fast = (SED_MATTYPE *) malloc (row*col*sizeof(SED_MATTYPE));
+  if ( m->fast == NULL )
+  {
+  #ifdef DEVEL_MAT_DEBUG
+	SED_Tm_error("SED_Tm_init: virtual memory exhausted",
+  	   NULL, NULL, NULL, NULL, NULL);
+  #endif
+	free(m);
+  	return NULL;
+  }
   m->mat = (void *) malloc (row*sizeof(SED_MATTYPE *));
-  if ( m->fast == NULL || m->mat == NULL)
-    {
-#ifdef DEVEL_MAT_DEBUG
+  if ( m->mat == NULL )
+  {
+  #ifdef DEVEL_MAT_DEBUG
       SED_Tm_error ("SED_Tm_init: virtual memory exhausted",
-	       NULL, NULL, NULL, NULL, NULL);
-#endif
-      return NULL;
-    }
+  	       NULL, NULL, NULL, NULL, NULL);
+  #endif
+	free(m->fast);
+	free(m);
+	return NULL;
+  }
   m->row = m->dim_row = row;
   m->col = m->dim_col = col;
   m->name = NULL;
@@ -808,6 +821,7 @@ int SED_Tm_readascii( char *fname,
        SED_Tm_error("error in SED_Tm_readascii\n (row2read = 0 and col2read = 0\n",
 	NULL, NULL, NULL, NULL, NULL);       
 #endif
+      fclose(fpin);
       return -1;
     }
   
@@ -819,7 +833,11 @@ int SED_Tm_readascii( char *fname,
 	}
       rewind(fpin); 
 
-      if (valcount ==0) return -1;
+      if (valcount ==0)
+      {
+    	  fclose(fpin);
+    	  return -1;
+      }
 
       if (row2read != 0) 
 	col2read = valcount/row2read; 	
@@ -829,12 +847,20 @@ int SED_Tm_readascii( char *fname,
 
 
   if ((*m)==NULL)   /* initialize matrix */
-    {
-    if (((*m) = SED_Tm_init (row2read, col2read)) == NULL) return -1;
-    }
+  {
+		if (((*m) = SED_Tm_init (row2read, col2read)) == NULL)
+		{
+			fclose(fpin);
+			return -1;
+		}
+  }
   else  /* check dimensions */
     {
-      if (col2read > (*m)->dim_col && row2read > (*m)->dim_row) return -1;
+      if (col2read > (*m)->dim_col && row2read > (*m)->dim_row)
+      {
+    	  fclose(fpin);
+    	  return -1;
+      }
       (*m)->col = col2read;
     }
 

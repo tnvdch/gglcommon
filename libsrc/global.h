@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: global.h,v 1.11 2001/08/31 12:08:24 favey Exp $
+ * $Id: global.h,v 1.10 2001/07/03 08:47:13 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -33,10 +33,9 @@
  *            19-03-1997  --  pascal version to port
  *            07-04-1997  --  c port
  *            21-04-1998  --  restructured makefiles
- * $Log: global.h,v $
- * Revision 1.11  2001/08/31 12:08:24  favey
- * cygwin adaptions
- *
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/global.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.10  2001/07/03 08:47:13  cocard
  * *** empty log message ***
  *

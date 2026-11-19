@@ -59,7 +59,7 @@
 #include "common.h"	/*  our own institute's headers */
 
 
-#define MAXTYP (7)
+#define MAXTYP (8)
 /* typ = 0     YYYY MM DD HH MM SS.SSS
  * typ = 1     MJD
  * typ = 2     MJD(int) SecOfDay
@@ -68,6 +68,7 @@
  * typ = 5     YYYY DayYear decimalHour
  * typ = 6     JD
  * typ = 7     YYYY.YYY
+ * typ = 8     T (Julian centuries since J2000.0)
  */
 
 /* ---------------------------------------------------------------------------------------
@@ -123,7 +124,8 @@ void display_usage (const int verbose)
       fprintf (stderr,"  -I    formtype on input\n");
       fprintf (stderr,"  -O    formtype on output\n");
       fprintf (stderr,"  -o    offset in seconds to be added to the output time (default = 0)\n");
-      fprintf (stderr,"  -d    number of digits to be printed (default = 6 for seconds / = 9 for days)\n");
+      fprintf (stderr,"  -d    number of digits to be printed (default = 6 for seconds, 9 for days\n");
+      fprintf (stderr,"        and 15 for centuries)\n");
       fprintf (stderr,"\n");
     }
   else
@@ -138,6 +140,7 @@ void display_usage (const int verbose)
   fprintf (stderr, "   5    year DayOfYear HourOfDay\n");
   fprintf (stderr, "   6    julian date\n");
   fprintf (stderr, "   7    year(double)\n");
+  fprintf (stderr, "   8    T(double) (Julian centuries since J2000.0)\n");
   fprintf (stderr,"\n");
 }
 
@@ -147,7 +150,7 @@ void display_usage (const int verbose)
 int convertstring2time( const  char * tstr, const int inptyp, double * mjd, int *count)
 {
   unsigned int mjd0, week, dayofyear;
-  double secofday, secofweek, year, fracyear;
+  double secofday, secofweek, year, fracyear, T;
   struct ttime t;
 
   switch (inptyp)
@@ -214,6 +217,12 @@ int convertstring2time( const  char * tstr, const int inptyp, double * mjd, int 
 	*mjd = yearday_to_mjd (t.year, 1);
 	*mjd += fracyear*((leapyear(t.year))?366.0:365.0);
       }
+    case 8: /* T(double) */
+    {
+        if (sscanf(tstr, "%lf %n", &T, count) != 1) return -1;
+        *mjd = T * JULCENTURY + MJD_J2000;
+    }
+
 
    } /* end switch */
 
@@ -228,15 +237,16 @@ int convertstring2time( const  char * tstr, const int inptyp, double * mjd, int 
  */
 int writetime( const int outtyp, double mjd, int digits)
 {
-  unsigned int year, day, week;
+  int year, day, week;
   double seconds, yeardouble, dummy;
-  int digit_year, digit_hour, digit_sec;
+  int digit_year, digit_hour, digit_sec, digit_cent;
   char format[MAXLINELENGTH];
 
 
   digit_year = (digits<0)?9:digits;
   digit_hour = (digits<0)?5:digits;
   digit_sec  = (digits<0)?6:digits;
+  digit_cent = (digits<0)?15:digits;
 
   switch (outtyp)
     {
@@ -305,6 +315,13 @@ int writetime( const int outtyp, double mjd, int digits)
 	fprintf(stdout,format,yeardouble);
       }
       break;
+
+    case 8: /* T(double) */
+    {
+        sprintf(format, "%%.%df", digit_cent);
+        fprintf(stdout, format, (mjd-MJD_J2000)/JULCENTURY);
+    }
+
       
     } /* end switch */
   

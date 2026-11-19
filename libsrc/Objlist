@@ -27,7 +27,7 @@ RCSOBJECTS=\
  tools\
  window\
  winterpol\
- xyz2grd\
+ xyz2grd
 
 # END RCSOBJECTS
 # objects to compile
@@ -64,4 +64,4 @@ OBJECTS=\
  tools\
  window\
  winterpol\
- xyz2grd\
+ xyz2grd

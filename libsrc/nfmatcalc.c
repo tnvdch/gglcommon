@@ -8,7 +8,7 @@
  *            and adopted to struct matrix as defined in
  *            matcalc.h)
  *
- * $Id: nfmatcalc.c,v 1.6 1999/09/08 09:12:18 favey Exp $
+ * $Id: nfmatcalc.c,v 1.6 1999/09/08 09:12:18 favey Exp favey $
  *
  *    NOTICE: This is commercial software and may NOT be distributed
  *            nor be used outside of the Geodesy and Geodynamics Lab, ETHZ
@@ -16,7 +16,9 @@
  *   AUTHORS: Cocard Marc     (adopted from numerical recipies)
  *
  *   HISTORY: 
- * $Log: nfmatcalc.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/nfmatcalc.c $
+ * 
+ * 1     31.08.01 15:00 Etienne
  * Revision 1.6  1999/09/08 09:12:18  favey
  * copyright info added
  *

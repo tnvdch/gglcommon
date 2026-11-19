@@ -30,7 +30,9 @@
  *   HISTORY: dd-mm-yyyy  --  description
  *            
  *            23-11-1997  --  created
- * $Log: gridop.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/gridop.c $
+ * 
+ * 2     31.01.02 9:05 Etienne
  * Revision 1.22  2002/01/30 13:36:47  cocard
  * *** empty log message ***
  *
@@ -541,8 +543,16 @@ int R_option( char * s, double *xmin, double *xmax, double *ymin, double *ymax)
   
   
   for (i=0; i<strlen(text); i++) if (text[i]=='/') text[i]=' ';
-  if (sscanf(text,"%lf %lf %lf %lf", xmin, xmax, ymin, ymax) != 4) return -1;
-  if (*xmin>*xmax || *ymin>*ymax) return -1;
+  if (sscanf(text,"%lf %lf %lf %lf", xmin, xmax, ymin, ymax) != 4)
+  {
+	  free(text);
+	  return -1;
+  }
+  if (*xmin>*xmax || *ymin>*ymax)
+  {
+	  free(text);
+	  return -1;
+  }
   free(text);
 
   return 0;
@@ -633,89 +643,168 @@ struct Grid * gmt_rasterinfo(int grdnr)
 
       /* field  1: grid number used for identification */
       if (line[0] != '#' && strtol(line, &p, 10) == grdnr)
-	{
-	  if ((g=g_init0()) == NULL) return NULL;
-	  if ((p=next_substring(p,&count)) == NULL) return NULL;
+      {
+		  if ((g=g_init0()) == NULL)
+		  {
+			fclose(fp);
+            return NULL;
+		  }
+		  if ((p=next_substring(p,&count)) == NULL)
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
 
-	  /* field  2: grid description */
-	  p[count-1]='\0';
-	  if ((g->id =strdup(p+1)) == NULL) return NULL;
-	  p+=count;
-	  
-	  /* field 3: zunit skipped */
-	  if ((p=next_substring(p,&count)) == NULL) return NULL;
-     	  p+=count;
-	  
-          /* field 4: R option (boundaries) */
-	  if ((p=next_substring(p,&count)) == NULL) return NULL;
-	  memset(substr, 0, MAXLINELENGTH );
-	  strncpy(substr, p, count);
-	  if (R_option(substr,&(g->xmin), &(g->xmax),
-		              &(g->ymin), &(g->ymax)) != 0) return NULL;
-	  p+=count;
+		  /* field  2: grid description */
+		  p[count-1]='\0';
+		  if ((g->id =strdup(p+1)) == NULL)
+          {
+			free(g);
+			fclose(fp);
+            return NULL;
+          }
+		  p+=count;
 
-	  
-	  /* field 5: I option (interval) */
-	  if ((p=next_substring(p,&count)) == NULL) return NULL;
-	  memset(substr, 0, MAXLINELENGTH );
-	  strncpy(substr, p, count);
-	  if (I_option(substr, &(g->dx), &(g->dy)) != 0) return NULL;
-	  p+=count;
+		  /* field 3: zunit skipped */
+		  if ((p=next_substring(p,&count)) == NULL)
+		  {
+			  free(g);
+    		  fclose(fp);
+			  return NULL;
+		  }
+			  p+=count;
 
-          /* field 6: Pixel or grid registration */
-          if ((p=next_substring(p,&count)) == NULL) return NULL;
-	  registration = p[0];
-	  if (!(registration == 'P' || registration == 'G')) return NULL;
-	  p+=count;
+			  /* field 4: R option (boundaries) */
+		  if ((p=next_substring(p,&count)) == NULL)
+		  {
+			  free(g);
+    		  fclose(fp);
+			  return NULL;
+		  }
+		  memset(substr, 0, MAXLINELENGTH );
+		  strncpy(substr, p, count);
+		  if (R_option(substr,&(g->xmin), &(g->xmax),
+						  &(g->ymin), &(g->ymax)) != 0)
+		  {
+			  free(g);
+    	      fclose(fp);
+			  return NULL;
+		  }
+		  p+=count;
 
-	  /* field 7: data type */
-	  if ((p=next_substring(p,&count)) == NULL) return NULL;
-	  g->datatype = p[0];
-	  g->datasize = g_datasize(g->datatype);
-	  p+=count;
 
-	  /* field 8: scale */
-	  if ((p=next_substring(p,&count)) == NULL) return NULL;
-	  g->scale = strtod(p, NULL);
-	  p+=count;
+		  /* field 5: I option (interval) */
+		  if ((p=next_substring(p,&count)) == NULL)
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
+		  memset(substr, 0, MAXLINELENGTH );
+		  strncpy(substr, p, count);
+		  if (I_option(substr, &(g->dx), &(g->dy)) != 0)
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
+		  p+=count;
 
-	  /* field 9: offset */ 
-	  if ((p=next_substring(p,&count)) == NULL) return NULL;
-	  g->offset = strtod(p, NULL);
-	  p+=count;
+			  /* field 6: Pixel or grid registration */
+			  if ((p=next_substring(p,&count)) == NULL)
+			  {
+				  free(g);
+                  fclose(fp);
+				  return NULL;
+			  }
+		  registration = p[0];
+		  if (!(registration == 'P' || registration == 'G'))
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
+		  p+=count;
 
-	  /* field 10: mask value */ 
-	  if ((p=next_substring(p,&count)) == NULL) return NULL;
-	  if (strncmp(p,"none",4) == 0) g->mask=NAN;
-	  else 
-	    {
-	      g->mask = strtod(p, NULL);
-	      if (fabs(g->mask)<1.0e-14) 
-		memset(&(g->mask),0,sizeof(g->mask));
-	    }
-	  p+=count;
+		  /* field 7: data type */
+		  if ((p=next_substring(p,&count)) == NULL)
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
+		  g->datatype = p[0];
+		  g->datasize = g_datasize(g->datatype);
+		  p+=count;
 
-	  /* field 11: filename  */ 
-	  if ((p=next_substring(p,&count)) == NULL) return NULL;
-	  p[count]='\0';
-	  if ((g->grdfilename = strdup(p)) == NULL) return NULL;
+		  /* field 8: scale */
+		  if ((p=next_substring(p,&count)) == NULL)
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
+		  g->scale = strtod(p, NULL);
+		  p+=count;
 
-	  fclose(fp);
+		  /* field 9: offset */
+		  if ((p=next_substring(p,&count)) == NULL)
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
+		  g->offset = strtod(p, NULL);
+		  p+=count;
 
-	  /* we change pixel registration to grid registration */  
-	  if (registration == 'P')
-	    {
-	      g->xmin += g->dx/2.0;
-	      g->xmax -= g->dx/2.0;
-	      g->ymin += g->dy/2.0;
-	      g->ymax -= g->dy/2.0;
-	    }
+		  /* field 10: mask value */
+		  if ((p=next_substring(p,&count)) == NULL)
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
+		  if (strncmp(p,"none",4) == 0) g->mask=NAN;
+		  else
+			{
+			  g->mask = strtod(p, NULL);
+			  if (fabs(g->mask)<1.0e-14)
+			memset(&(g->mask),0,sizeof(g->mask));
+			}
+		  p+=count;
 
-	  g->nx = (long int) rint((g->xmax - g->xmin)/g->dx + 1);
-	  g->ny = (long int) rint((g->ymax - g->ymin)/g->dy + 1);
-	  g_setdataparameter(g, 1);
-	  return g;
-	}
+		  /* field 11: filename  */
+		  if ((p=next_substring(p,&count)) == NULL)
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
+		  p[count]='\0';
+		  if ((g->grdfilename = strdup(p)) == NULL)
+		  {
+			  free(g);
+              fclose(fp);
+			  return NULL;
+		  }
+
+		  fclose(fp);
+
+		  /* we change pixel registration to grid registration */
+		  if (registration == 'P')
+			{
+			  g->xmin += g->dx/2.0;
+			  g->xmax -= g->dx/2.0;
+			  g->ymin += g->dy/2.0;
+			  g->ymax -= g->dy/2.0;
+			}
+
+		  g->nx = (long int) rint((g->xmax - g->xmin)/g->dx + 1);
+		  g->ny = (long int) rint((g->ymax - g->ymin)/g->dy + 1);
+		  g_setdataparameter(g, 1);
+		  return g;
+		}
     }
   return NULL;
 }

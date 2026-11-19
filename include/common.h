@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: global.h,v 1.11 2001/08/31 12:08:24 favey Exp $
+ * $Id: global.h,v 1.10 2001/07/03 08:47:13 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -33,10 +33,9 @@
  *            19-03-1997  --  pascal version to port
  *            07-04-1997  --  c port
  *            21-04-1998  --  restructured makefiles
- * $Log: global.h,v $
- * Revision 1.11  2001/08/31 12:08:24  favey
- * cygwin adaptions
- *
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/global.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.10  2001/07/03 08:47:13  cocard
  * *** empty log message ***
  *
@@ -331,13 +330,18 @@ void spherical_to_cartesian(
 /*
  *  geocentric to ellipsoidal
  *  parameters have to be passed and are returned in rad
- */ 
+ */
 int xyz_to_llh(
 	       const struct ellipsoid ell,
 	       const double xyz[3],
 	       double *lat,
 	       double *lon,
 	       double *h);
+
+/*
+ * Additional termination condition for iteration in xyz_to_llh() (max. number of iterations).
+ */
+#define MAX_ITERATIONS 50
 
 
 /*
@@ -577,7 +581,7 @@ int countinbox();	/* find in box a set of points, source: findinbox.c */
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: cmdline.h,v 1.7 2002/01/30 16:07:10 favey Exp $
+ * $Id: cmdline.h,v 1.5 1999/09/08 09:32:31 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -597,13 +601,12 @@ int countinbox();	/* find in box a set of points, source: findinbox.c */
  *   AUTHORS: Favey Etienne   <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: cmdline.h,v $
- * Revision 1.7  2002/01/30 16:07:10  favey
- * cmdline: added output of default values and incremental option flag
- *
- * Revision 1.6  2001/08/31 12:08:24  favey
- * cygwin adaptions
- *
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/cmdline.h $
+ * 
+ * 2     30.01.02 16:44 Etienne
+ * added incremental option
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.5  1999/09/08 09:32:31  favey
  * copyright info added
  *
@@ -802,7 +805,7 @@ int xyz_to_top2 (double xyz[3],
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: d1linear.h,v 1.3 1999/09/08 09:32:31 favey Exp $
+ * $Id: d1linear.h,v 1.3 1999/09/08 09:32:31 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -824,7 +827,9 @@ int xyz_to_top2 (double xyz[3],
  *   HISTORY: dd-mm-yyyy  --  description
  *            
  *            28-04-1998  --  created
- * $Log: d1linear.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/d1linear.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.3  1999/09/08 09:32:31  favey
  * copyright info added
  *
@@ -861,7 +866,7 @@ int d1ipol_linear (
  **              my own error procrssing on my local machine.
  **
  **   COPYRIGHT: Copyright (C) 1996 by Etienne Favey
- ** $Id: errproc.h,v 1.6 2000/07/25 13:18:46 favey Exp $
+ ** $Id: errproc.h,v 1.6 2000/07/25 13:18:46 favey Exp favey $
  **
  **  DISCLAIMER:   This program is free software; you can redistribute
  **              it and/or modify it under the terms of the GNU General
@@ -884,7 +889,9 @@ int d1ipol_linear (
  **     CHANGES: dd-mm-yyyy -- description
  **              20-10-1996 -- written and tested
  **              19-08-1997 -- added error codes
- ** $Log: errproc.h,v $
+ ** $Log: /GPS/SOFTWARE/common_devel/libsrc/errproc.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  ** Revision 1.6  2000/07/25 13:18:46  favey
  ** introducing OS_AIX
  **
@@ -927,7 +934,7 @@ typedef int boolean;
  *  extend global variables for verbosity
  * strange problems in c++ --> removed in c++ version
  */
-#ifndef CPP
+#if 0 // ndef CPP
 char *program_invocation_name;        /* dup of the same as argv[0] */
 char *program_invocation_short_name;  /* above w/o preceeding path  */
 #endif
@@ -966,7 +973,7 @@ void gputerr (
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: ggl_time.h,v 1.5 1999/09/28 13:10:03 favey Exp $
+ * $Id: ggl_time.h,v 1.5 1999/09/28 13:10:03 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -1022,6 +1029,17 @@ struct ttime {
  *   mjd for gpsweek = 0 and sec = 0
  */
 #define GPSMJD0  (44244.0)
+
+/*
+ * MJD for 0.5 days into the year 2000
+ */
+#define MJD_J2000 (51544.5)
+
+/*
+ * number of days in a Julian century
+ */
+#define JULCENTURY (36525.0)
+
 
 #define leapyear(year) (!((year%4!=0) || (year%100==0 && year%400!=0)) )
 
@@ -1566,7 +1584,7 @@ char * get_fileformat (
  *
  * COPYRIGHT: (c) 1999 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: sunras.h,v 1.4 2001/02/21 14:00:19 cocard Exp $
+ * $Id: sunras.h,v 1.4 2001/02/21 14:00:19 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -1587,7 +1605,9 @@ char * get_fileformat (
  *            Favey Etienne <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: sunras.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sunras.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.4  2001/02/21 14:00:19  cocard
  * *** empty log message ***
  *
@@ -1775,7 +1795,7 @@ int intersection_line_segment(
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp $
+ * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -1806,7 +1826,9 @@ int intersection_line_segment(
  *            01-07-1998  --  m_separate_sym added (MC)
  *            02-11-1998  --  introduced SED functionality
  *
- * $Log: sed_matcalc.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sed_matcalc.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.8  2000/05/12 09:22:53  favey
  * changed devel version to DEVEL_MAT_DEBUG
  *
@@ -2109,7 +2131,7 @@ int im_separate_sym(
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp $
+ * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -2140,7 +2162,9 @@ int im_separate_sym(
  *            01-07-1998  --  m_separate_sym added (MC)
  *            02-11-1998  --  introduced SED functionality
  *
- * $Log: sed_matcalc.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sed_matcalc.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.8  2000/05/12 09:22:53  favey
  * changed devel version to DEVEL_MAT_DEBUG
  *
@@ -2443,7 +2467,7 @@ int sm_separate_sym(
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp $
+ * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -2474,7 +2498,9 @@ int sm_separate_sym(
  *            01-07-1998  --  m_separate_sym added (MC)
  *            02-11-1998  --  introduced SED functionality
  *
- * $Log: sed_matcalc.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sed_matcalc.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.8  2000/05/12 09:22:53  favey
  * changed devel version to DEVEL_MAT_DEBUG
  *
@@ -2777,7 +2803,7 @@ int lm_separate_sym(
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp $
+ * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -2808,7 +2834,9 @@ int lm_separate_sym(
  *            01-07-1998  --  m_separate_sym added (MC)
  *            02-11-1998  --  introduced SED functionality
  *
- * $Log: sed_matcalc.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sed_matcalc.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.8  2000/05/12 09:22:53  favey
  * changed devel version to DEVEL_MAT_DEBUG
  *
@@ -3108,14 +3136,16 @@ int m_separate_sym(
  *
  *   PURPOSE: matrix operations (non free stuff taken from numerical recipies)
  *
- * $Id: nfmatcalc.h,v 1.3 1998/11/02 10:42:44 favey Exp $
+ * $Id: nfmatcalc.h,v 1.3 1998/11/02 10:42:44 favey Exp favey $
  *
  *   AUTHORS: Cocard Marc 
  *
  *   HISTORY: dd-mm-yyyy  --  description
  *            
  *            23-06-1998  --  created
- * $Log: nfmatcalc.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/nfmatcalc.h $
+ * 
+ * 1     31.08.01 15:00 Etienne
  * Revision 1.3  1998/11/02 10:42:44  favey
  * added RCS verbosity
  *
@@ -3179,7 +3209,7 @@ int m_jacobi2(struct matrix *a, struct matrix *evec, int *nrot);
  *
  *   AUTHORS: Cocard Marc     <cocard@geod.ethz.ch> (pascal version)
  *            Favey Etienne   <favey@geod.ethz.ch>  (c port)
- * $Id: sed_mat3.h,v 1.4 2001/02/21 13:28:19 cocard Exp $
+ * $Id: sed_mat3.h,v 1.4 2001/02/21 13:28:19 cocard Exp favey $
  *
  *   HISTORY: dd-mm-yyyy  --  description
  *            
@@ -3187,7 +3217,9 @@ int m_jacobi2(struct matrix *a, struct matrix *evec, int *nrot);
  *            19-03-1997  --  pascal version to port
  *            07-04-1997  --  c port
  *            14-05-1997  --  fixed boundary bug, thanks Mario!
- * $Log: sed_mat3.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sed_mat3.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.4  2001/02/21 13:28:19  cocard
  * *** empty log message ***
  *
@@ -3264,7 +3296,7 @@ int rotmat_to_vec     ( double rotmat[3][3], double rotvec[3], double *angle);
  *
  *   AUTHORS: Cocard Marc     <cocard@geod.ethz.ch> (pascal version)
  *            Favey Etienne   <favey@geod.ethz.ch>  (c port)
- * $Id: sed_mat3.h,v 1.4 2001/02/21 13:28:19 cocard Exp $
+ * $Id: sed_mat3.h,v 1.4 2001/02/21 13:28:19 cocard Exp favey $
  *
  *   HISTORY: dd-mm-yyyy  --  description
  *            
@@ -3272,7 +3304,9 @@ int rotmat_to_vec     ( double rotmat[3][3], double rotvec[3], double *angle);
  *            19-03-1997  --  pascal version to port
  *            07-04-1997  --  c port
  *            14-05-1997  --  fixed boundary bug, thanks Mario!
- * $Log: sed_mat3.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sed_mat3.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.4  2001/02/21 13:28:19  cocard
  * *** empty log message ***
  *
@@ -3543,7 +3577,7 @@ double ch_magnetic_deviation (
  *
  * COPYRIGHT: (c) 1999 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: mapnr.h,v 1.2 1999/09/08 09:12:18 favey Exp $
+ * $Id: mapnr.h,v 1.2 1999/09/08 09:12:18 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -3564,7 +3598,9 @@ double ch_magnetic_deviation (
  *            Favey Etienne <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: mapnr.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/mapnr.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.2  1999/09/08 09:12:18  favey
  * copyright info added
  *
@@ -3596,7 +3632,7 @@ int map_100 (const double y, const double x) ;
  *
  * COPYRIGHT: (c) 1999 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: mapcut.h,v 1.4 2000/08/15 16:38:13 favey Exp $
+ * $Id: mapcut.h,v 1.4 2000/08/15 16:38:13 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -3617,7 +3653,9 @@ int map_100 (const double y, const double x) ;
  *            Favey Etienne <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: mapcut.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/mapcut.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.4  2000/08/15 16:38:13  favey
  * mapras: bugfix and complete rewrite
  *
@@ -3795,7 +3833,7 @@ int permutation_ctrlprint(FILE *fp, int n, int addcounter);
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: window.h,v 1.11 1999/09/08 09:12:18 favey Exp $
+ * $Id: window.h,v 1.11 1999/09/08 09:12:18 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -3815,7 +3853,9 @@ int permutation_ctrlprint(FILE *fp, int n, int addcounter);
  *   AUTHORS: Favey Etienne   <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: window.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/window.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.11  1999/09/08 09:12:18  favey
  * copyright info added
  *
@@ -4032,7 +4072,7 @@ int interpol_join (
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: xyz2grd.h,v 1.8 2000/12/11 16:09:00 favey Exp $
+ * $Id: xyz2grd.h,v 1.8 2000/12/11 16:09:00 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General

@@ -620,6 +620,7 @@ main (
 		       program_invocation_short_name,
 		       argv[optind+1],
 		       strerror (errno) );
+	      fclose(fpin);
 	      return EXIT_FAILURE;
 	    }
 	}

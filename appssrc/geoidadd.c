@@ -225,7 +225,12 @@ int main ( int argc, char **argv)
 		 in_ftyp[0], in_ftyp[1], in_ftyp[2],
 		 in_fcol[0], in_fcol[1], in_fcol[2]);
 #endif
-	if (err != 0) return EXIT_FAILURE;
+	if (err != 0)
+	{
+		free(inft);
+		free(outft);
+		return EXIT_FAILURE;
+	}
 	coordstr.count = in_fcol[0] + in_fcol[1] + in_fcol[2];
 	err = select_formtype(outft, out_ftyp, out_fcol);
 #ifdef LIB_DEBUG
@@ -233,6 +238,10 @@ int main ( int argc, char **argv)
 		 out_ftyp[0], out_ftyp[1], out_ftyp[2],
 		 out_fcol[0], out_fcol[1], out_fcol[2]);
 #endif
+	free(inft);
+	free(outft);
+    inft = NULL;
+    outft = NULL;
 	if (err != 0) return EXIT_FAILURE;
 
 	geoid = select_geoid (geoidstr, g_ftyp);
@@ -251,6 +260,7 @@ int main ( int argc, char **argv)
 			 program_invocation_short_name);
 		fprintf (stderr, "%s: are you trying something like latitude in meters?\n",
 			 program_invocation_short_name);
+		g_free (geoid);
 		return EXIT_FAILURE;
 	}
 	err = validate_col (g_ftyp, g_index);
@@ -259,6 +269,7 @@ int main ( int argc, char **argv)
 			 program_invocation_short_name);
 		fprintf (stderr, "%s: I would guess a misconfigured config file\n",
 			 program_invocation_short_name);
+        g_free (geoid);
 		return EXIT_FAILURE;
 	}
 
@@ -287,6 +298,10 @@ int main ( int argc, char **argv)
 			fprintf (stderr, "%s: invalid input line nr %ld\n",
 				 program_invocation_short_name, linecount);
 			fprintf (stdout, "%s", entireline);
+			free(prefixstr);
+			for (i=0;i<coordstr.count;i++) free (coordstr.col[i]);
+			free (coordstr.col);
+			g_free (geoid);
 			return EXIT_FAILURE;
 		}
 		/* convert */
@@ -298,7 +313,13 @@ int main ( int argc, char **argv)
 					  coordstr.col[in_index[i]],
 					  linecount);
 		}
-		if (err != 0) return EXIT_FAILURE;
+		if (err != 0){
+			free(prefixstr);
+			for (i=0;i<coordstr.count;i++) free (coordstr.col[i]);
+			free (coordstr.col);
+			g_free (geoid);
+			return EXIT_FAILURE;
+		}
 
 		/* conversion routines */
 		g_inter_bilinear (geoid, source[g_index[0]], source[g_index[1]], &undul);

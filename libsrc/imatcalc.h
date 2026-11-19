@@ -8,7 +8,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp $
+ * $Id: sed_matcalc.h,v 1.8 2000/05/12 09:22:53 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -39,7 +39,9 @@
  *            01-07-1998  --  m_separate_sym added (MC)
  *            02-11-1998  --  introduced SED functionality
  *
- * $Log: sed_matcalc.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sed_matcalc.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.8  2000/05/12 09:22:53  favey
  * changed devel version to DEVEL_MAT_DEBUG
  *

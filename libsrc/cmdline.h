@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: cmdline.h,v 1.7 2002/01/30 16:07:10 favey Exp $
+ * $Id: cmdline.h,v 1.5 1999/09/08 09:32:31 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -27,13 +27,12 @@
  *   AUTHORS: Favey Etienne   <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: cmdline.h,v $
- * Revision 1.7  2002/01/30 16:07:10  favey
- * cmdline: added output of default values and incremental option flag
- *
- * Revision 1.6  2001/08/31 12:08:24  favey
- * cygwin adaptions
- *
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/cmdline.h $
+ * 
+ * 2     30.01.02 16:44 Etienne
+ * added incremental option
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.5  1999/09/08 09:32:31  favey
  * copyright info added
  *

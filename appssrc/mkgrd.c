@@ -9,12 +9,14 @@
  *                     ETH Zurich
  *
  *   AUTHORS: Etienne Favey
- * $Id: mkgrd.c,v 1.12 2000/12/11 16:09:31 favey Exp $
+ * $Id: mkgrd.c,v 1.12 2000/12/11 16:09:31 favey Exp favey $
  *
  *   HISTORY: dd-mm-yyyy  --  description
  *            
  *             7-10-1999  --  created, linear approximation
- * $Log: mkgrd.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/appssrc/mkgrd.c $
+ * 
+ * 1     31.08.01 14:49 Etienne
  * Revision 1.12  2000/12/11 16:09:31  favey
  * new options, exponent and z
  *

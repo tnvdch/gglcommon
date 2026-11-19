@@ -7,7 +7,7 @@
  **              my own error processing on my local machine.
  **
  **   COPYRIGHT: Copyright (C) 1996 by Etienne Favey
- ** $Id: errproc.c,v 1.8 2001/06/08 12:32:23 cocard Exp $
+ ** $Id: errproc.c,v 1.8 2001/06/08 12:32:23 cocard Exp favey $
  **
  **  DISCLAIMER:   This program is free software; you can redistribute
  **              it and/or modify it under the terms of the GNU General
@@ -29,7 +29,9 @@
  **
  **     CHANGES: dd-mm-yyyy -- description
  **              20-10-1996 -- written and tested :-)
- ** $Log: errproc.c,v $
+ ** $Log: /GPS/SOFTWARE/common_devel/libsrc/errproc.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  ** Revision 1.8  2001/06/08 12:32:23  cocard
  ** *** empty log message ***
  **
@@ -81,6 +83,7 @@
 void                                    /* Initialize the variables below */
 errinit (const char *program_name)      /*   with the appropriate values. */
 {
+#if 0
   extern char *program_invocation_name;        /* dup of the same as argv[0] */
   extern char *program_invocation_short_name;  /* above w/o preceeding path  */
   char *argument;
@@ -116,6 +119,7 @@ errinit (const char *program_name)      /*   with the appropriate values. */
    */ 
   program_invocation_short_name = strdup (final);
   free (argument);
+#endif
 }
 
 /*

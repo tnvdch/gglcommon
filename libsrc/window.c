@@ -8,7 +8,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: window.c,v 1.18 1999/09/08 09:12:18 favey Exp $
+ * $Id: window.c,v 1.18 1999/09/08 09:12:18 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -28,7 +28,9 @@
  *   AUTHORS: Favey Etienne   <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: window.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/window.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.18  1999/09/08 09:12:18  favey
  * copyright info added
  *

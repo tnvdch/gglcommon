@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: tools.c,v 1.7 2001/08/31 08:28:41 cocard Exp $
+ * $Id: tools.c,v 1.7 2001/08/31 08:28:41 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -29,7 +29,9 @@
  *   HISTORY: dd-mm-yyyy  --  description
  *            
  *            31-08-1997  --  created
- * $Log: tools.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/tools.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.7  2001/08/31 08:28:41  cocard
  * *** empty log message ***
  *

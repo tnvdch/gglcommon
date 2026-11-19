@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: xyz2grd.c,v 1.16 2000/12/11 16:09:00 favey Exp $
+ * $Id: xyz2grd.c,v 1.16 2000/12/11 16:09:00 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -58,15 +58,31 @@ struct blockchains * blockchain_init (const double xmin, const double xmax,
   ablock->bxmin = xmin - ablock->bxinc; ablock->bymin = ymin - ablock->byinc;
   ablock->bxmax = xmax + ablock->bxinc; ablock->bymax = ymax + ablock->byinc;
   ablock->count = (int *)malloc(ablock->bxn*ablock->byn*sizeof(int));
-  if (ablock->count == NULL) return NULL;
+  if (ablock->count == NULL)
+  {
+	blockchain_free(ablock);
+  	return NULL;
+  }
   ablock->ch = (struct Node ***) malloc (ablock->bxn*sizeof(struct Node **));
-  if (ablock->ch == NULL) return NULL;
+  if (ablock->ch == NULL)
+  {
+      blockchain_free(ablock);
+	  return NULL;
+  }
   for (i=0; i<ablock->bxn; i++) {
     ablock->ch[i]=(struct Node **)malloc(ablock->byn*sizeof(struct Node *));
-    if (ablock->ch[i]==NULL) return NULL;
+    if (ablock->ch[i]==NULL)
+    {
+        blockchain_free(ablock);
+    	return NULL;
+    }
     for (j=0; j<ablock->byn; j++) {
       ablock->ch[i][j] = chain_init ( &(ablock->count[i*ablock->byn+j]) );
-      if (ablock->ch[i][j] == NULL) return NULL;
+      if (ablock->ch[i][j] == NULL)
+      {
+		  blockchain_free(ablock);
+    	  return NULL;
+      }
     }
   }
   return ablock;

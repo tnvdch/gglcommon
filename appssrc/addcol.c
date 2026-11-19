@@ -266,8 +266,21 @@ int main ( int argc, char **argv)
   data1.filename=strdup(argv[optind]);
   data2.filename=strdup(argv[optind+1]);
   
-  if ((data1.fp=open_text_file(data1.filename, "r")) == NULL)  return EXIT_FAILURE;
-  if ((data2.fp=open_text_file(data2.filename, "r")) == NULL)  return EXIT_FAILURE;
+  if ((data1.fp=open_text_file(data1.filename, "r")) == NULL)
+  {
+	  free(dummy);
+	  free( data1.filename);
+	  free( data2.filename);
+	  return EXIT_FAILURE;
+  }
+  if ((data2.fp=open_text_file(data2.filename, "r")) == NULL)
+  {
+ 	  free(dummy);
+	  free( data1.filename);
+	  free( data2.filename);
+	  fclose(data1.fp);
+	  return EXIT_FAILURE;
+  }
 
   readdata(&data1, includecomment, idstringlength);
   readdata(&data2, FALSE,          idstringlength);
@@ -298,7 +311,12 @@ int main ( int argc, char **argv)
 	  }
     }
   
-  
 
+  free(dummy);
+  free( data1.filename);
+  free( data2.filename);
+  fclose(data1.fp);
+  fclose(data2.fp);
+  
   return EXIT_SUCCESS;    
 }

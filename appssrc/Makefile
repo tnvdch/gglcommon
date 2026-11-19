@@ -9,6 +9,12 @@
 #
 # =================================================================== 
 
+VERBOSE=0
+ifeq ($(VERBOSE),1)
+V=
+else
+V=@
+endif
 
 OBJDIR=../obj
 LDFLAGS= -L $(OBJDIR) -lcommon${EXT} -lm
@@ -25,19 +31,10 @@ include Pgnlist
 RPC_FILES=$(foreach file,$(PGNS),$(REPOSITORY)/apps/$(file).c,v )
 
 % : %.c ${OBJDIR}/libcommon.a
-	$(CC) $(DSV) $(CFLAGS) -I../include $< -o $@ $(LDFLAGS)
-
-coro :
-	-co -r $(RPC_FILES) $(REPOSITORY)/apps/Makefile,v $(REPOSITORY)/apps/Pgnlist,v
-
-co :
-	-co -l $(RPC_FILES) $(REPOSITORY)/apps/Makefile,v $(REPOSITORY)/apps/Pgnlist,v
-
-ci :
-	-ci -u $(RPC_FILES) $(REPOSITORY)/apps/Makefile,v $(REPOSITORY)/apps/Pgnlist,v
+	$(V)$(CC) $(DSV) $(CFLAGS) -I../include $< -o $@ $(LDFLAGS)
 
 clean :
-	rm -f $(PGNS)
+	$(V)rm -f $(PGNS)
 
 pu:
-	rm -f *~ *% *.bak
+	$(V)rm -f *~ *% *.bak

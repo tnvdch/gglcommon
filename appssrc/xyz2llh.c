@@ -242,7 +242,14 @@ int main ( int argc, char **argv)
 		 in_ftyp[0], in_ftyp[1], in_ftyp[2],
 		 in_fcol[0], in_fcol[1], in_fcol[2]);
 #endif
-	if (err != 0) return EXIT_FAILURE;
+	if (err != 0)
+	{
+   		free(inft);
+	    inft = NULL;
+	    free(outft);
+	    outft = NULL;
+		return EXIT_FAILURE;
+	}
 
 	err = select_formtype(outft, out_ftyp, out_fcol);
 #ifdef LIB_DEBUG
@@ -250,9 +257,28 @@ int main ( int argc, char **argv)
 		 out_ftyp[0], out_ftyp[1], out_ftyp[2],
 		 out_fcol[0], out_fcol[1], out_fcol[2]);
 #endif
-	if (err != 0) return EXIT_FAILURE;
+	if (err != 0)
+	{
+		free(inft);
+	    inft = NULL;
+	    free(outft);
+	    outft = NULL;
+		return EXIT_FAILURE;
+	}
 	useell = select_ellipsoid (ellstr);
-	if (useell == NULL) return EXIT_FAILURE;
+	if (useell == NULL)
+	{
+		free(inft);
+	    inft = NULL;
+	    free(outft);
+	    outft = NULL;
+		return EXIT_FAILURE;
+	}
+	free(inft);
+	inft = NULL;
+    free(outft);
+	outft = NULL;
+
 	linecount = 0L;
 
 	/* validate column types and resolve indices */
@@ -267,6 +293,7 @@ int main ( int argc, char **argv)
 			 program_invocation_short_name);
 		fprintf (stderr, "%s: are you trying something like latitude in meters?\n",
 			 program_invocation_short_name);
+
 		return EXIT_FAILURE;
 	}
 

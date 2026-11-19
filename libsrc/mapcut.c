@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1999 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: mapcut.c,v 1.4 2000/08/15 16:38:13 favey Exp $
+ * $Id: mapcut.c,v 1.4 2000/08/15 16:38:13 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -28,7 +28,9 @@
  *            Favey Etienne <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: mapcut.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/mapcut.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.4  2000/08/15 16:38:13  favey
  * mapras: bugfix and complete rewrite
  *
@@ -176,14 +178,25 @@ int mappaste (const double west,const double north,
     if (!fp) {
       puterr("mapcut","mappaste");
       fprintf (stderr, "Error opening file %s!\n", fname);
+      free(outmap);
       return EXIT_FAILURE;
     }
     
     /* read the header */
     inv = read_sunras_header (fp, &rh);
-    if (inv == 2) return GGLERR_INOUT;
+    if (inv == 2)
+    {
+    	free(outmap);
+		if (zip) {pclose(fp);} else {fclose(fp);}
+    	return GGLERR_INOUT;
+    }
     err = read_colormap (fp, rh.ras_maplength, colmap);
-    if (err != 0) return GGLERR_INOUT;
+    if (err != 0)
+    {
+    	free(outmap);
+   		if (zip) {pclose(fp);} else {fclose(fp);}
+    	return GGLERR_INOUT;
+    }
 		
     /* read image pixels */
     if (verbose) fprintf(stderr, "reading image pixels\n");
@@ -202,13 +215,26 @@ int mappaste (const double west,const double north,
 	if (pip<0 || pip >= P_WIDTH*lpmm*P_HEIGHT*lpmm || pop<0 || pop >= outmap_size) {
 	  puterr("mapcut","mappaste");
 	  fprintf (stderr, "internal pixel accounting error!\n");
+	  free(outmap);
+      if (zip) {pclose(fp);} else {fclose(fp);}
 	  return EXIT_FAILURE;
 	}
 	toread = pip-curpos;
-	if (toread > 0 && overread_chars(fp, toread)!=0) return -1;
+	if (toread > 0 && overread_chars(fp, toread)!=0)
+	{
+		free(outmap);
+        if (zip) {pclose(fp);} else {fclose(fp);}
+		return -1;
+	}
 	curpos += toread;
 	n = getc(fp);
-	if (n==EOF) return EXIT_FAILURE;
+	if (n==EOF)
+	{
+		free(outmap);
+        if (zip) {pclose(fp);} else {fclose(fp);}
+		return EXIT_FAILURE;
+	}
+
 	curpos++;
 	outmap[pop] = (unsigned char) n;
       }
@@ -229,7 +255,11 @@ int mappaste (const double west,const double north,
   rh.ras_length = rh.ras_width*rh.ras_height;
   if (do_gmt == FALSE) {
     /* write sun raster file (MT) original code */
-    if (!(fpout = open_text_file (outfname, "w"))) return EXIT_FAILURE;
+    if (!(fpout = open_text_file (outfname, "w")))
+    {
+    	free(outmap);
+    	return EXIT_FAILURE;
+    }
     write_sunras_header (fpout, &rh, inv);
     write_colormap (fpout, rh.ras_maplength, colmap);
     if (verbose) fprintf(stderr, "%d : map size\n", outmap_size);
@@ -241,11 +271,19 @@ int mappaste (const double west,const double north,
     double easting, northing;
     int i,j;
     cptfname = add_extension (outfname, "cpt");
-    if (!(fpout = open_text_file (cptfname, "w"))) return EXIT_FAILURE;
+    if (!(fpout = open_text_file (cptfname, "w")))
+    {
+    	free(outmap);
+    	return EXIT_FAILURE;
+    }
     write_cptfile (fpout, rh.ras_maplength, colmap);
     fclose (fpout);
     grdfname = add_extension (outfname, "xyz");
-    if (!(fpout = open_text_file (grdfname, "w"))) return EXIT_FAILURE;
+    if (!(fpout = open_text_file (grdfname, "w")))
+    {
+    	free(outmap);
+    	return EXIT_FAILURE;
+    }
     fprintf (fpout,"# mapras: %9.2f/%9.2f/%9.2f/%9.2f %d\n", 
 	     west, east, south, north, outmap_size);
     for (i=0;i<outmap_height;i++)

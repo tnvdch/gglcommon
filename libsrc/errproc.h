@@ -7,7 +7,7 @@
  **              my own error procrssing on my local machine.
  **
  **   COPYRIGHT: Copyright (C) 1996 by Etienne Favey
- ** $Id: errproc.h,v 1.6 2000/07/25 13:18:46 favey Exp $
+ ** $Id: errproc.h,v 1.6 2000/07/25 13:18:46 favey Exp favey $
  **
  **  DISCLAIMER:   This program is free software; you can redistribute
  **              it and/or modify it under the terms of the GNU General
@@ -30,7 +30,9 @@
  **     CHANGES: dd-mm-yyyy -- description
  **              20-10-1996 -- written and tested
  **              19-08-1997 -- added error codes
- ** $Log: errproc.h,v $
+ ** $Log: /GPS/SOFTWARE/common_devel/libsrc/errproc.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  ** Revision 1.6  2000/07/25 13:18:46  favey
  ** introducing OS_AIX
  **
@@ -73,7 +75,7 @@ typedef int boolean;
  *  extend global variables for verbosity
  * strange problems in c++ --> removed in c++ version
  */
-#ifndef CPP
+#if 0 // ndef CPP
 char *program_invocation_name;        /* dup of the same as argv[0] */
 char *program_invocation_short_name;  /* above w/o preceeding path  */
 #endif

@@ -300,7 +300,12 @@ int main ( int argc, char **argv)
 		 in_ftyp[0], in_ftyp[1], in_ftyp[2],
 		 in_fcol[0], in_fcol[1], in_fcol[2]);
 #endif
-	if (err != 0) return EXIT_FAILURE;
+	if (err != 0)
+	{
+		free(inft);
+		free(outft);
+		return EXIT_FAILURE;
+	}
 	coordstr.count = in_fcol[0] + in_fcol[1] + in_fcol[2];
 	err = select_formtype(outft, out_ftyp, out_fcol);
 #ifdef LIB_DEBUG
@@ -308,11 +313,24 @@ int main ( int argc, char **argv)
 		 out_ftyp[0], out_ftyp[1], out_ftyp[2],
 		 out_fcol[0], out_fcol[1], out_fcol[2]);
 #endif
-	if (err != 0) return EXIT_FAILURE;
+	if (err != 0)
+	{
+		free(inft);
+		free(outft);
+		return EXIT_FAILURE;
+	}
+
+	free(inft);
+	free(outft);
+	inft = NULL;
+	outft = NULL;
 
 	/* here we would have to switch (projection) */
 	/* verify the projection type, at the time being only swiss */
-	if (strstr(projstr, "swiss") == NULL) return EXIT_FAILURE;
+	if (strstr(projstr, "swiss") == NULL)
+	{
+		return EXIT_FAILURE;
+	}
 
 	linecount = 0L;
 

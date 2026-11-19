@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: quatern.c,v 1.6 2001/08/31 08:40:18 cocard Exp $
+ * $Id: quatern.c,v 1.6 2001/08/31 08:40:18 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -28,7 +28,9 @@
  *            Favey Etienne <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: quatern.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/quatern.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.6  2001/08/31 08:40:18  cocard
  * *** empty log message ***
  *

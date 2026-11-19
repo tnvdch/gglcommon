@@ -5,14 +5,16 @@
  *
  *   PURPOSE: matrix operations (non free stuff taken from numerical recipies)
  *
- * $Id: nfmatcalc.h,v 1.3 1998/11/02 10:42:44 favey Exp $
+ * $Id: nfmatcalc.h,v 1.3 1998/11/02 10:42:44 favey Exp favey $
  *
  *   AUTHORS: Cocard Marc 
  *
  *   HISTORY: dd-mm-yyyy  --  description
  *            
  *            23-06-1998  --  created
- * $Log: nfmatcalc.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/nfmatcalc.h $
+ * 
+ * 1     31.08.01 15:00 Etienne
  * Revision 1.3  1998/11/02 10:42:44  favey
  * added RCS verbosity
  *

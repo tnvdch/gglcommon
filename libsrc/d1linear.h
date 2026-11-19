@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: d1linear.h,v 1.3 1999/09/08 09:32:31 favey Exp $
+ * $Id: d1linear.h,v 1.3 1999/09/08 09:32:31 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -29,7 +29,9 @@
  *   HISTORY: dd-mm-yyyy  --  description
  *            
  *            28-04-1998  --  created
- * $Log: d1linear.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/d1linear.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.3  1999/09/08 09:32:31  favey
  * copyright info added
  *

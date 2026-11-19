@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: intersect.c,v 1.13 2001/07/27 17:18:15 cocard Exp $
+ * $Id: intersect.c,v 1.13 2001/07/27 17:18:15 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -30,7 +30,9 @@
  *            
  *            02-05-1998  --  created
  *
- * $Log: intersect.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/intersect.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.13  2001/07/27 17:18:15  cocard
  * *** empty log message ***
  *

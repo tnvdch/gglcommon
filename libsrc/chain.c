@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: chain.c,v 1.10 2000/08/12 10:53:52 favey Exp $
+ * $Id: chain.c,v 1.10 2000/08/12 10:53:52 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -30,7 +30,9 @@
  *            
  *            20-05-1998  --  created
  *
- * $Log: chain.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/chain.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.10  2000/08/12 10:53:52  favey
  * bugfix free_chain
  *

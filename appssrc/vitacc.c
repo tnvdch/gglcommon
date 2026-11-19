@@ -22,7 +22,7 @@
  *              to the Free Software Foundation, Inc., 675 Mass Ave,
  *              Cambridge, MA 02139, USA.
  *
- * $Id: vitacc.c,v 1.3 2001/08/31 12:08:55 favey Exp $
+ * $Id: vitacc.c,v 1.2 2000/03/09 16:16:26 ypeter Exp favey $
  *
  *    AUTHORS:  Geiger Alain  (Pascal version), 
                 Peter Yannick (c version)
@@ -31,10 +31,9 @@
  *            
  *            21-02-2000  --  C version created
  *
- * $Log: vitacc.c,v $
- * Revision 1.3  2001/08/31 12:08:55  favey
- * cygwin adaptions
- *
+ * $Log: /GPS/SOFTWARE/common_devel/appssrc/vitacc.c $
+ * 
+ * 1     31.08.01 14:49 Etienne
  * Revision 1.2  2000/03/09 16:16:26  ypeter
  * Fully revised. More options, more carefully tested, more error checks.
  *
@@ -220,7 +219,7 @@ int write_header ( FILE *fp,
 
   /* Allocate memory for user and time info */
   now=(struct ttime*)malloc(sizeof(struct ttime));
-  user=(struct passwd*)malloc(sizeof(struct passwd));
+
   host=(char*)malloc(255*sizeof(char));
 
   /* get user, host and time info */
@@ -295,10 +294,15 @@ int write_header ( FILE *fp,
   default:
     fprintf(stderr, "\n%s: Output format %d is invalid. Aborting!\n\n",
 	      program_invocation_short_name, param->outformat);
+
+      free(host);
+      free(now);
       return EXIT_FAILURE;
   } /* end switch */
   fprintf(fp,"#-----------------------------------------\n");
   
+  free(host);
+  free(now);
   return EXIT_SUCCESS;
 }
 
@@ -454,15 +458,15 @@ int main ( int argc, char **argv )
     {0,'o', &param.outfname, CMDL_CHAR, NULL, 0, " <outname>",
     "output file name (default = stdout)"},
     {0,'I', &param.inpformat, CMDL_INT, NULL, 0, " <format>",
-     "Input format (default = 1):\n\
-\t   1 = GENERIC: time X Y Z (sX sY sZ)\n\
-\t   2 = GPSKIN output: YYYY MM DD hh mm ss.s X Y Z (sX sY sZ)"},
+     "Input format (default = 1):"									\
+	 "\t   1 = GENERIC: time X Y Z (sX sY sZ)"						\
+	 "\t   2 = GPSKIN output: YYYY MM DD hh mm ss.s X Y Z (sX sY sZ)"},
     {0,'O', &param.outformat, CMDL_INT, NULL, 0, " <format>",
-     "Output format (default = 1) :\n\
-\t   1 = time, posX/Y/Z, velX/Y/Z, accX/Y/Z, dist, azi, elev\n\
-\t   2 = time, posX/Y/Z, sigmaX/Y/Z dist, azi, elev\n\
-\t   3 = time, velX/Y/Z, sigmaX/Y/Z velabs\n\
-\t   4 = time, accX/Y/Z, sigmaX/Y/Z accabs"}
+     "Output format (default = 1) :"								\
+	 "\t   1 = time, posX/Y/Z, velX/Y/Z, accX/Y/Z, dist, azi, elev" \
+	 "\t   2 = time, posX/Y/Z, sigmaX/Y/Z dist, azi, elev"			\
+	 "\t   3 = time, velX/Y/Z, sigmaX/Y/Z velabs"					\
+	 "\t   4 = time, accX/Y/Z, sigmaX/Y/Z accabs"}
   };
    int optcount = (sizeof(myopts)/sizeof(struct mainoptions));
 

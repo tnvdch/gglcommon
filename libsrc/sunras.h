@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1999 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: sunras.h,v 1.4 2001/02/21 14:00:19 cocard Exp $
+ * $Id: sunras.h,v 1.4 2001/02/21 14:00:19 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -28,7 +28,9 @@
  *            Favey Etienne <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: sunras.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sunras.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.4  2001/02/21 14:00:19  cocard
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /*
  * COPYRIGHT: (c) 1999 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: winterpol.c,v 1.4 2000/02/25 12:57:58 ypeter Exp $
+ * $Id: winterpol.c,v 1.4 2000/02/25 12:57:58 ypeter Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General

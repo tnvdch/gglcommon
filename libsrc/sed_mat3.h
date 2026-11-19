@@ -25,7 +25,7 @@
  *
  *   AUTHORS: Cocard Marc     <cocard@geod.ethz.ch> (pascal version)
  *            Favey Etienne   <favey@geod.ethz.ch>  (c port)
- * $Id: sed_mat3.h,v 1.4 2001/02/21 13:28:19 cocard Exp $
+ * $Id: sed_mat3.h,v 1.4 2001/02/21 13:28:19 cocard Exp favey $
  *
  *   HISTORY: dd-mm-yyyy  --  description
  *            
@@ -33,7 +33,9 @@
  *            19-03-1997  --  pascal version to port
  *            07-04-1997  --  c port
  *            14-05-1997  --  fixed boundary bug, thanks Mario!
- * $Log: sed_mat3.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/sed_mat3.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.4  2001/02/21 13:28:19  cocard
  * *** empty log message ***
  *

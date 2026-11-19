@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1999 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: mapnr.h,v 1.2 1999/09/08 09:12:18 favey Exp $
+ * $Id: mapnr.h,v 1.2 1999/09/08 09:12:18 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -28,7 +28,9 @@
  *            Favey Etienne <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: mapnr.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/mapnr.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.2  1999/09/08 09:12:18  favey
  * copyright info added
  *

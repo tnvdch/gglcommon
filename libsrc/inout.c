@@ -8,7 +8,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: inout.c,v 1.25 2001/08/31 12:08:24 favey Exp $
+ * $Id: inout.c,v 1.24 2001/08/07 11:02:16 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -29,10 +29,12 @@
  *            Favey Etienne   <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: inout.c,v $
- * Revision 1.25  2001/08/31 12:08:24  favey
- * cygwin adaptions
- *
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/inout.c $
+ * 
+ * 2     10.12.04 16:14 Nobs
+ * make compile under darwin
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.24  2001/08/07 11:02:16  cocard
  * *** empty log message ***
  *
@@ -233,7 +235,7 @@ int read_delim (FILE *fpin,
 		int delimiter,
 		char **lineptr)
 {
-#if defined(OS_SOLARIS) || defined(OS_AIX) || defined(OS_CYGWIN)
+#if defined(OS_SOLARIS) || defined(OS_AIX) || defined(OS_CYGWIN) || defined(__APPLE__)
   /*
    *  Sadly enough, Solaris does not support `getdelim',
    *  so we need to use fgets instead. Note that in this case, the allocation

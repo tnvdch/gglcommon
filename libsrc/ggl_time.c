@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: ggl_time.c,v 1.16 2001/08/31 12:08:24 favey Exp $
+ * $Id: ggl_time.c,v 1.15 2001/02/21 14:00:19 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -32,10 +32,12 @@
  *                  1987  --  created
  *            19-03-1997  --  pascal version to port
  *            07-04-1997  --  c port
- * $Log: ggl_time.c,v $
- * Revision 1.16  2001/08/31 12:08:24  favey
- * cygwin adaptions
- *
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/ggl_time.c $
+ * 
+ * 2     10.12.04 16:14 Nobs
+ * make compile under darwin
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.15  2001/02/21 14:00:19  cocard
  * *** empty log message ***
  *
@@ -104,7 +106,7 @@
  *  our own headers
  */
 #include "global.h"
-#if defined(OS_LINUX) || defined(OS_AIX) || defined(OS_CYGWIN)
+#if defined(OS_LINUX) || defined(OS_AIX) || defined(OS_CYGWIN) || defined(__APPLE__)
 #include <sys/time.h>
 #endif
 #include "ggl_time.h"
@@ -254,14 +256,13 @@ int dayofyear2(double mjd)
   return day;
 }
 
-#if defined(OS_LINUX) || defined(OS_AIX) || defined(OS_CYGWIN)
+#if defined(OS_LINUX) || defined(OS_AIX) || defined(OS_CYGWIN) || defined(__APPLE__)
 double mjdnow ()
 {
   struct timeval t;
   int errchk;
 
   errchk=gettimeofday(&t,NULL);
-  if (errchk != 0) { /* ignore error */ }
   return ((t.tv_sec+(t.tv_usec/(double)1000000.0)) /(double) 86400.0 + SYSMJD0);
 }
 
@@ -289,7 +290,9 @@ int localtimenow (struct ttime *t)
    */
   t->mjd = mjdnow();
   tzset();
+#ifndef __APPLE__ // FIXME: fix this !
   t->mjd -= (double)(timezone) / 86400.0;
+#endif
   return mjddat (t);
 }
 #endif
@@ -399,13 +402,22 @@ double GMST (double mjd)
 double secofday (const char *mjd)
 {
   char *timestring, *token, *endtok;
-  double seconds, days;
+  double seconds = -1.0;
+  double days;
 
   timestring = strdup (mjd);
-  token = strchr (timestring, '.');
-  if (token == NULL) return -1.0;
-  days = strtod (token, &endtok);
-  if (token == endtok) return -1.0;
-  seconds = days * 86400.0;
+  if (timestring != NULL)
+  {
+	  token = strchr (timestring, '.');
+	  if (token != NULL)
+	  {
+		  days = strtod (token, &endtok);
+		  if (token != endtok)
+		  {
+			  seconds = days * 86400.0;
+		  }
+	  }
+	  free(timestring);
+  }
   return seconds;
 }

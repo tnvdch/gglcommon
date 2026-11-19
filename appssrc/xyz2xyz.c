@@ -206,7 +206,14 @@ int main ( int argc, char **argv)
 	   in_fcol[0], in_fcol[1], in_fcol[2]);
 #endif
 
-  if (err != 0) return EXIT_FAILURE;
+  if (err != 0)
+  {
+	  free(inft);
+	  inft = NULL;
+	  free(outft);
+	  outft = NULL;
+	  return EXIT_FAILURE;
+  }
   coordstr.count = in_fcol[0] + in_fcol[1] + in_fcol[2];
   err = select_formtype(outft, out_ftyp, out_fcol);
 #ifdef LIB_DEBUG
@@ -215,7 +222,15 @@ int main ( int argc, char **argv)
 	   out_fcol[0], out_fcol[1], out_fcol[2]);
 #endif
 
-  if (err != 0) return EXIT_FAILURE;
+  free(inft);
+  inft = NULL;
+  free(outft);
+  outft = NULL;
+
+  if (err != 0)
+  {
+	  return EXIT_FAILURE;
+  }
   
   fc = select_frameconv (inframestr, inepoch, outframestr, outepoch);
   if (fc == NULL) return EXIT_FAILURE;
@@ -240,6 +255,11 @@ int main ( int argc, char **argv)
      strange behaviour of old version */
     
   prefixstr = (char *) malloc((prefix_char+1)*sizeof(char));
+  if (prefixstr == NULL)
+  {
+	  /* Failed to allocate memory */
+	  return EXIT_FAILURE;
+  }
   memset(prefixstr, '\0', prefix_char+1);
   
   while (read_line_static (stdin, entireline, MAXLINELENGTH) != EOF) {
@@ -256,6 +276,7 @@ int main ( int argc, char **argv)
     if (err != 3) {
       fprintf(stderr,"%s: invalid input on line nr %ld\n",
 	      program_invocation_short_name, linecount); 
+      free(prefixstr);
       return EXIT_FAILURE;  
     }
     
@@ -271,5 +292,6 @@ int main ( int argc, char **argv)
     fprintf(stdout,"%s\n",suffixstr);
   }   
 
+  free(prefixstr);
   return EXIT_SUCCESS;
 }

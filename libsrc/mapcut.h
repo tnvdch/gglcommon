@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1999 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: mapcut.h,v 1.4 2000/08/15 16:38:13 favey Exp $
+ * $Id: mapcut.h,v 1.4 2000/08/15 16:38:13 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -28,7 +28,9 @@
  *            Favey Etienne <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: mapcut.h,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/mapcut.h $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.4  2000/08/15 16:38:13  favey
  * mapras: bugfix and complete rewrite
  *

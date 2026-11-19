@@ -9,7 +9,7 @@
  **              contents to an angle struct.
  **
  **   COPYRIGHT: Copyright (C) 1996 by Etienne Favey
- ** $Id: angles.c,v 1.5 1999/01/26 17:19:19 favey Exp $
+ ** $Id: angles.c,v 1.5 1999/01/26 17:19:19 favey Exp favey $
  **
  **  DISCLAIMER:   This program is free software; you can redistribute
  **              it and/or modify it under the terms of the GNU General
@@ -30,7 +30,9 @@
  **              Zurich, Switzerland
  **
  **     CHANGES: 
- ** $Log: angles.c,v $
+ ** $Log: /GPS/SOFTWARE/common_devel/libsrc/angles.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  ** Revision 1.5  1999/01/26 17:19:19  favey
  ** moved out of swiss.h
  **

@@ -9,7 +9,7 @@
  **              with the swiss projection system.
  **
  **   COPYRIGHT: Copyright (C) 1996 by Etienne Favey
- ** $Id: trafo.c,v 1.11 2001/12/12 15:49:36 cocard Exp $
+ ** $Id: trafo.c,v 1.10 1999/06/02 16:13:19 cocard Exp favey $
  **
  **  DISCLAIMER:   This program is free software; you can redistribute
  **              it and/or modify it under the terms of the GNU General
@@ -37,10 +37,9 @@
  **                            taken from public version 1.08,
  **                            renamed blh to llh, introduced
  **                            struct ellipsoid and vectors
- ** $Log: trafo.c,v $
- ** Revision 1.11  2001/12/12 15:49:36  cocard
- ** *** empty log message ***
- **
+ ** $Log: /GPS/SOFTWARE/common_devel/libsrc/trafo.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  ** Revision 1.10  1999/06/02 16:13:19  cocard
  ** *** empty log message ***
  **
@@ -147,7 +146,7 @@ void spherical_to_cartesian(double lat, double lon, double radius, double xyz[3]
 /*
  *  geocentric to ellipsoidal
  *  parameters have to be passed and are returned in rad
- */ 
+ */
 int xyz_to_llh (
 		const struct ellipsoid ell,
 		const double xyz[3],
@@ -155,16 +154,34 @@ int xyz_to_llh (
 		double *lon,
 		double *h)
 {
-  double a, ex2;
+    double a, ex2, b;
   double n,p,fac;
   double h0,b0;
   a = ell.a;
   ex2 = ell.e2;
-  
+  int niter = MAX_ITERATIONS;
+
+  /* The calculation fails near the poles. A different approach is used within
+   * 0.5mm from the poles. */
+  if (xyz[0] < 5e-4 && xyz[1] < 5e-4)
+  {
+      *lat = sign(xyz[2]) * M_PI / 2;
+      *lon = 0; /* FIXME: or rather: undefined (nan)? */
+      b = sqrt(a*a*(1-ex2));
+      *h = ( xyz[2] - b * sign(xyz[2]) ) * sign(xyz[2]);
+
+#ifdef WITH_ERRORS
+      puterr ("trafo", "xyz_to_llh");
+      fprintf (stderr, "Warning: longitude is not defined at the poles.\n");
+#endif
+    return EXIT_SUCCESS;
+  }
+
   *lon = atan2(xyz[1],xyz[0]);
   p = sqrt(xyz[0]*xyz[0]+xyz[1]*xyz[1]);
   *lat = atan(xyz[2]/(1-ex2)/p);
   *h = 0.0;
+
   do
     {
       h0 = *h;
@@ -174,8 +191,17 @@ int xyz_to_llh (
       *lat = atan(xyz[2]/p/fac);
       *h   = p/cos(*lat)-n;
     }
-  while ((fabs(h0-*h)>1.0e-6) || (fabs(b0-*lat)>1.0e-11));
-  
+  while ( ((fabs(h0-*h)>1.0e-6) || (fabs(b0-*lat)>1.0e-11)) && --niter );
+
+#ifdef WITH_ERRORS
+  if (niter == 0)
+	{
+	  puterr ("trafo", "xyz_to_llh");
+	  fprintf (stderr, "%f/%f/%f did not converge: d_height=%f, d_lat=%f iter=%i\n",
+			   xyz[0], xyz[1], xyz[2], fabs(h0-*h), fabs(b0-*lat), niter);
+	}
+#endif
+
   return EXIT_SUCCESS;
 }
 
@@ -214,8 +240,9 @@ static struct frameconv * frame_init (
   struct frameconv *newf;
   double dt, scale, rot[3];
   double tmpmat[3][3];
-  int i;
+  int i,err;
   
+  err = 0;
   if (fcparam == NULL) return NULL;
   newf = (struct frameconv *) malloc (sizeof(struct frameconv));
   
@@ -293,36 +320,14 @@ int frame_conv (
   if (fcp->fwd > 0) 
     {
       /* fcp->rm is not inverted! */
-/*
-fprintf(stderr,"CTRL : rm-inverted = %d\n",fcp->fwd);
-fprintf(stderr,"CTRL : tmp status : %f %f %f\n", tmp[0], tmp[1], tmp[2]);
-fprintf(stderr,"CTRL : source : %f %f %f\n", source[0], source[1], source[2]);
-*/
       m3v3_mult (fcp->rm, source, tmp);
-/*
-fprintf(stderr,"CTRL : source rotated : %f %f %f\n", tmp[0], tmp[1], tmp[2]);
-*/
       v3_add (fcp->dx, tmp, target);
-/*
-fprintf(stderr,"CTRL : target : %f %f %f\n", target[0], target[1], target[2]);
-*/
     } 
   else 
     {
       /* fcp->rm is inverted by frame_init */
-/*
-fprintf(stderr,"CTRL : rm-inverted = %d\n",fcp->fwd);
-fprintf(stderr,"CTRL : tmp status : %f %f %f\n", tmp[0], tmp[1], tmp[2]);
-fprintf(stderr,"CTRL : source : %f %f %f\n", source[0], source[1], source[2]);
-*/
       v3_sub (source, fcp->dx, tmp);
-/*
-fprintf(stderr,"CTRL : source tanslated : %f %f %f\n", tmp[0], tmp[1], tmp[2]);
-*/
       m3v3_mult (fcp->rm, tmp, target);
-/*
-fprintf(stderr,"CTRL : target : %f %f %f\n", target[0], target[1], target[2]);
-*/
     }
   return 0;
 }
@@ -356,11 +361,26 @@ struct ellipsoid * select_ellipsoid (
   
   /* initialize regex pattern */
   pattern = (char *) malloc (sizeof(char)*(20+strlen(ellstr)));
+  if (pattern == NULL)
+  {
+    fclose(fpconf);
+	return NULL;
+  }
+
   compex = (regex_t *) malloc (sizeof(regex_t));
+  if (compex == NULL)
+  {
+    fclose(fpconf);
+	free(pattern);
+	return NULL;
+  }
   sprintf(pattern, "^ellipsoid  *%s ", ellstr);
   if ((err = regcomp (compex, pattern, REG_ICASE))!=0) 
     {
       compex_error (err, compex, "select_ellipsoid");
+      fclose(fpconf);
+	  regfree(compex);
+      free(pattern);
       return NULL;
     }
   theell = NULL;
@@ -377,9 +397,13 @@ struct ellipsoid * select_ellipsoid (
 	  free (line);
 	  continue;
 	}
-      if (err != 0) 
+    if (err != 0) 
 	{
 	  compex_error (err, compex, "select_ellipsoid");
+	  free(line);
+	  free (pattern);
+      regfree (compex);
+  	  fclose (fpconf);
 	  return NULL;
 	}
       err = sscanf (line, "%*s %*s %lf %lf", &a, &e2);
@@ -680,6 +704,7 @@ int select_formtype (
   if ((err = regcomp (compex, pattern, REG_ICASE))!=0) 
     {
       compex_error (err, compex, "select_formtype");
+      free(pattern);
       return GGLERR_INOUT;
     }
   for (i=0;i<3;i++) 
@@ -772,6 +797,7 @@ struct Grid * select_geoid (
   if ((err = regcomp (compex, pattern, REG_ICASE))!=0) 
     {
       compex_error (err, compex, "select_geoid");
+      free(pattern);
       return NULL;
     }
   gg = NULL;
@@ -790,6 +816,7 @@ struct Grid * select_geoid (
       if (err != 0) 
 	{
 	  compex_error (err, compex, "select_geoid");
+	  free(pattern);
 	  return NULL;
 	}
       err = sscanf (line, "%*s %*s %s %s %s %s", col0, col1, col2, gfname);

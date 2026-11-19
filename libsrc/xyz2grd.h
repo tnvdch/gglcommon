@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: xyz2grd.h,v 1.8 2000/12/11 16:09:00 favey Exp $
+ * $Id: xyz2grd.h,v 1.8 2000/12/11 16:09:00 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General

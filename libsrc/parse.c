@@ -8,7 +8,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: parse.c,v 1.7 2001/08/31 12:08:24 favey Exp $
+ * $Id: parse.c,v 1.6 2000/07/25 13:18:46 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -28,10 +28,9 @@
  *   AUTHORS: Favey Etienne   <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: parse.c,v $
- * Revision 1.7  2001/08/31 12:08:24  favey
- * cygwin adaptions
- *
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/parse.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.6  2000/07/25 13:18:46  favey
  * introducing OS_AIX
  *
@@ -330,11 +329,11 @@ char * get_fileformat (
  */
 {
   char *s, *stmp;
+  char *tmpstr = NULL;
   int length;
   char *token;
   int l_tok;
   char *format;
-  int format_size;
   int format_pos; /* only for debugging purposes */
   int err ,i;
   int type_found;
@@ -358,6 +357,7 @@ char * get_fileformat (
 	       "get_fileformat: unexpected end of file, check file\n");
 #endif
       free (s);
+      free(output_delim);
       return NULL;
     }
 
@@ -372,6 +372,7 @@ char * get_fileformat (
 	       "get_fileformat: empty line read, empty file?\n");
 #endif
       free (s);
+      free(output_delim);
       return NULL;
     }
 
@@ -383,6 +384,7 @@ char * get_fileformat (
 	       "get_fileformat: binary type, ascii was desired\n");
 #endif
       free (s);
+      free(output_delim);
       return NULL;
     }
 
@@ -391,9 +393,8 @@ char * get_fileformat (
      *  DEBUG: allow blocks delimited by arbitrary character?
      *  DEBUG: allow array of delimiters to be exchanged?
      */
-    format_size = length * (strlen(delimiters)+3) * sizeof(char);
-    format = (char *) malloc (format_size);
-    memset (format, 0, format_size);
+    format = (char *) malloc (length * (strlen(delimiters)+3) * sizeof(char));
+    memset (format, 0, sizeof(format));
     format_pos = 0;
     stmp = strdup (s);
     token = strtok (stmp, delimiters);
@@ -620,8 +621,12 @@ char * get_fileformat (
        */
       token = strtok (NULL, delimiters);
     }
-    return strdup (format);
-    break;
+    tmpstr = strdup (format);
+	free(format);
+    free(output_delim);
+    free(stmp);
+    free (s);
+	return tmpstr;
   case ASCII_BLOCK:
     /* fall through */
   case BINARY_BLOCK:
@@ -633,6 +638,7 @@ char * get_fileformat (
     fprintf (stderr,
 	     "get_fileformat: desired file type not implemented\n");
 #endif
+    free(output_delim);
     return NULL;
   }
 }

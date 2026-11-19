@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: crdtrans.c,v 1.12 2001/07/03 08:28:49 cocard Exp $
+ * $Id: crdtrans.c,v 1.12 2001/07/03 08:28:49 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -28,7 +28,9 @@
  *            Favey Etienne   <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: crdtrans.c,v $
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/crdtrans.c $
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.12  2001/07/03 08:28:49  cocard
  * *** empty log message ***
  *

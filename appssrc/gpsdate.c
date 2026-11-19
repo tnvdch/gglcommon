@@ -16,7 +16,7 @@
 /*           (3)   GPSWeek  DayofWeek                                       */
 /*           (4)   modified julian day                                      */
 /*--------------------------------------------------------------------------*/
-/*  $Id: gpsdate.c,v 1.4 2001/02/21 13:28:26 cocard Exp $  */
+/*  $Id: gpsdate.c,v 1.4 2001/02/21 13:28:26 cocard Exp favey $  */
 /*
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General

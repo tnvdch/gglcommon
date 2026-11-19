@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: cmdline.c,v 1.10 2002/01/30 16:07:10 favey Exp $
+ * $Id: cmdline.c,v 1.9 2001/06/08 12:32:23 cocard Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -27,10 +27,14 @@
  *   AUTHORS: Favey Etienne   <favey@geod.ethz.ch>
  *
  *   HISTORY: 
- * $Log: cmdline.c,v $
- * Revision 1.10  2002/01/30 16:07:10  favey
- * cmdline: added output of default values and incremental option flag
- *
+ * $Log: /GPS/SOFTWARE/common_devel/libsrc/cmdline.c $
+ * 
+ * 3     30.01.02 16:44 Etienne
+ * added incremental option
+ * 
+ * 2     12.12.01 15:37 Etienne
+ * 
+ * 1     31.08.01 14:51 Etienne
  * Revision 1.9  2001/06/08 12:32:23  cocard
  * *** empty log message ***
  *
@@ -120,19 +124,19 @@ void print_usage_info (
 	
 	if (verb != FALSE) for (numopt=0;numopt<numelem;numopt++) {
 	  if (o[numopt].valid) {
-		fprintf (stderr," -%c     %s", o[numopt].optchar,
-			 o[numopt].longdesc);
-		switch (o[numopt].argtype) {
-		case 1: // int
+		 fprintf (stderr," -%c     %s", o[numopt].optchar,
+					 o[numopt].longdesc);
+		 switch (o[numopt].argtype) {
+		 case 1: // int
 			fprintf (stderr, ", default: %d", *((int *)o[numopt].argument));
 			break;
-		case 2: // double
+		 case 2: // double
 			fprintf (stderr, ", default: %15.9f", *((double *)o[numopt].argument));
 			break;
-		default:
-			break;
-		}
-		fprintf (stderr, "\n");
+		 default:
+		   ;
+		 }
+		 fprintf (stderr, "\n");
 	  }
 	} else
 		fprintf (stderr,
@@ -199,9 +203,9 @@ static int eval_cmdline_opt(
 
 	if (os->flag != NULL) {
 	  if (os->argtype == CMDL_INCR) {
-		*(os->flag) += os->valseen;
+		 *(os->flag) += os->valseen;
 	  } else {
-		*(os->flag) = os->valseen;
+		 *(os->flag) = os->valseen;
 	  }
 	}
 

@@ -101,13 +101,18 @@ void spherical_to_cartesian(
 /*
  *  geocentric to ellipsoidal
  *  parameters have to be passed and are returned in rad
- */ 
+ */
 int xyz_to_llh(
 	       const struct ellipsoid ell,
 	       const double xyz[3],
 	       double *lat,
 	       double *lon,
 	       double *h);
+
+/*
+ * Additional termination condition for iteration in xyz_to_llh() (max. number of iterations).
+ */
+#define MAX_ITERATIONS 50
 
 
 /*

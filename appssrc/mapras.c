@@ -73,11 +73,29 @@ void display_version()
   fprintf (stderr," *              Cambridge, MA 02139, USA.\n\n");
 }
 
+void mil2wgs84 (double north, double east, double *wgs84_lat, double *wgs84_lon)
+{
+	double lat, lon, hgt, bessel_xyz[3], wgs84_xyz[3];
+	double ch1903p_etrf[3]={674.374, 15.056, 405.346};
+	const struct ellipsoid bessel={6377397.155, 0.006674372230614};
+	const struct ellipsoid wgs84 ={6378137.000, 0.00669438};
+
+	ch_miltoell (north, east, &lat, &lon);
+	hgt = 0.0;
+	llh_to_xyz (bessel, lat, lon, hgt, bessel_xyz);
+	v3_add (bessel_xyz, ch1903p_etrf, wgs84_xyz);
+	xyz_to_llh (wgs84, wgs84_xyz, &lat, &lon, &hgt);
+	*wgs84_lat = lat * (180.0/M_PI);
+	*wgs84_lon = lon * (180.0/M_PI);
+}
+
+
 
 /*  That's where we do the work 
  */
 int main ( int argc, char **argv)
 {
+  FILE *fpmcf;
   int ind_read, lv, anz_karten;   /* index of first non option argument */
   int sheets[SIZE];
   int err;
@@ -90,7 +108,11 @@ int main ( int argc, char **argv)
   int do_gmt = FALSE;
   char *region = NULL;
   char *mappath = NULL;
+  char *mcfpath = NULL;
+  int domcf = FALSE;
   double west, east, south, north;
+  double lat, lon;
+  double pixx, pixy;
   int map_type = 25;
   
   /*  let's define our command line options
@@ -111,7 +133,9 @@ int main ( int argc, char **argv)
     {0,'G', NULL, 0, &do_gmt, TRUE, "",
      "Output map is GMT colortable and coordinates with gridvalue"},
     {0,'M', &mappath, CMDL_CHAR, NULL, 0, " <path_to_maps>",
-     "Directory where the maps are stored"}
+     "Directory where the maps are stored"},
+    {0,'m', &mcfpath, CMDL_CHAR, &domcf, TRUE, " <mcf_file>",
+     "Output for map calibration file"}
   };
   
   int optcount = (sizeof(myopts)/sizeof(struct mainoptions));
@@ -137,6 +161,7 @@ int main ( int argc, char **argv)
   if (mappath == NULL) mappath = strdup("/cdrom");
   if (region == NULL) { 
     print_usage_info(FALSE, myopts, optcount, description, nonoptarg); 
+    free(mappath);
     return EXIT_FAILURE; 
   } else {
     int i, n;
@@ -145,6 +170,7 @@ int main ( int argc, char **argv)
     n = sscanf (region, "%lf %lf %lf %lf", &west, &east, &south, &north);
     if (n<4 || west > east || north < south) {
       print_usage_info(FALSE, myopts, optcount, description, nonoptarg); 
+      free(mappath);
       return EXIT_FAILURE; 
     }
   }
@@ -159,6 +185,7 @@ int main ( int argc, char **argv)
     break;
   default:
     print_usage_info(FALSE, myopts, optcount, description, nonoptarg); 
+    free(mappath);
     return EXIT_FAILURE; 
   }
   if (verbose) {
@@ -170,6 +197,7 @@ int main ( int argc, char **argv)
   if (err != 0) {
     fprintf (stderr, "%s: Some required map missing!\n",
 	     program_invocation_short_name);
+    free(mappath);
     return EXIT_FAILURE;
   }
 
@@ -178,8 +206,52 @@ int main ( int argc, char **argv)
   if (err != 0) {
     fprintf(stderr, "%s: Error while pasting maps together!\n",
 	    program_invocation_short_name);
+    free(mappath);
     return EXIT_FAILURE;
   }
+
+  if (domcf) {
+	fpmcf = open_text_file (mcfpath, "w");
+	if (!fpmcf) return EXIT_FAILURE;
+  } else {
+	fpmcf = stdout;
+  }
+  fprintf (fpmcf, "[REFERENCE]\r\n");
+
+  mil2wgs84 (north, west, &lat, &lon);
+  pixx = pixy = 0.0;
+  fprintf (fpmcf, "1 = %10.2f, %10.2f, %15.9f, %15.9f\r\n", pixx, pixy, lon, lat);
+
+  mil2wgs84 (north, east, &lat, &lon);
+  pixx = (east-west)/linespermm;
+  pixy = 0.0;
+  fprintf (fpmcf, "2 = %10.2f, %10.2f, %15.9f, %15.9f\r\n", pixx, pixy, lon, lat);
+
+  mil2wgs84 (south, west, &lat, &lon);
+  pixx = 0.0;
+  pixy = (north-south)/linespermm;
+  fprintf (fpmcf, "3 = %10.2f, %10.2f, %15.9f, %15.9f\r\n", pixx, pixy, lon, lat);
+
+  fprintf (fpmcf, "\r\n");
+
+  fprintf (fpmcf, "[REFERENCE_CH]\r\n");
+
+  pixx = pixy = 0.0;
+  fprintf (fpmcf, "1 = %10.2f, %10.2f, %15.3f, %15.3f\r\n", pixx, pixy, west, north);
+
+  pixx = (east-west)/linespermm;
+  pixy = 0.0;
+  fprintf (fpmcf, "2 = %10.2f, %10.2f, %15.3f, %15.3f\r\n", pixx, pixy, east, north);
+
+  pixx = 0.0;
+  pixy = (north-south)/linespermm;
+  fprintf (fpmcf, "3 = %10.2f, %10.2f, %15.3f, %15.3f\r\n", pixx, pixy, west, south);  
+
+  fprintf (fpmcf, "\r\n");
+
+  if (domcf) fclose (fpmcf);
+
+  free(mappath);
   return EXIT_SUCCESS;
 }
 

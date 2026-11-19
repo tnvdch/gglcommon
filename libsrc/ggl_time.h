@@ -7,7 +7,7 @@
  *
  * COPYRIGHT: (c) 1997 Geodesy and Geodynamics Lab,
  *                     ETH Zurich
- * $Id: ggl_time.h,v 1.5 1999/09/28 13:10:03 favey Exp $
+ * $Id: ggl_time.h,v 1.5 1999/09/28 13:10:03 favey Exp favey $
  *
  *  DISCLAIMER:   This program is free software; you can redistribute
  *              it and/or modify it under the terms of the GNU General
@@ -63,6 +63,17 @@ struct ttime {
  *   mjd for gpsweek = 0 and sec = 0
  */
 #define GPSMJD0  (44244.0)
+
+/*
+ * MJD for 0.5 days into the year 2000
+ */
+#define MJD_J2000 (51544.5)
+
+/*
+ * number of days in a Julian century
+ */
+#define JULCENTURY (36525.0)
+
 
 #define leapyear(year) (!((year%4!=0) || (year%100==0 && year%400!=0)) )
 

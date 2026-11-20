@@ -1,2 +1,15 @@
 obj
 libsrc/.depend
+appssrc/addcol
+appssrc/geoidadd
+appssrc/gpsdate
+appssrc/gpstime
+appssrc/llh2proj
+appssrc/mapras
+appssrc/mkgrd
+appssrc/natra
+appssrc/tconv
+appssrc/vitacc
+appssrc/xyz2llh
+appssrc/xyz2xyz
+appssrc/zval

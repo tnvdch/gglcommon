@@ -341,7 +341,7 @@ char * get_fileformat (
   const char delimiters[] = " \f\n\r\t\v";
   char *output_delim;
 
-  output_delim = (char *) malloc (strlen(delimiters)+4*sizeof(char));
+  output_delim = (char *) malloc (strlen(delimiters)+6*sizeof(char));
   sprintf (output_delim, " %%[^%s]", delimiters);
 
   switch (type) {
@@ -394,7 +394,7 @@ char * get_fileformat (
      *  DEBUG: allow array of delimiters to be exchanged?
      */
     format = (char *) malloc (length * (strlen(delimiters)+3) * sizeof(char));
-    memset (format, 0, sizeof(format));
+    memset (format, 0, (length * (strlen(delimiters)+3) * sizeof(char)));
     format_pos = 0;
     stmp = strdup (s);
     token = strtok (stmp, delimiters);

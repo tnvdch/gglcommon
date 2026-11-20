@@ -238,11 +238,10 @@ static struct frameconv * frame_init (
 				      struct frameread *fcparam)
 {
   struct frameconv *newf;
-  double dt, scale, rot[3];
+  double dt, rot[3];
   double tmpmat[3][3];
-  int i,err;
+  int i;
   
-  err = 0;
   if (fcparam == NULL) return NULL;
   newf = (struct frameconv *) malloc (sizeof(struct frameconv));
   
@@ -257,7 +256,7 @@ static struct frameconv * frame_init (
 #ifdef WITH_ERRORS
 	  char *inoutep;
 	  
-	  if (newf->fwd > 0) inoutep = strdup ("input");
+	  if (fcparam->fwd > 0) inoutep = strdup ("input");
 	  else inoutep = strdup ("output");
 	  fprintf (stderr, "GGL Common Library -- swiss\n");
 	  fprintf (stderr, "frame_init: %s epoch specified but not needed, ignored\n", inoutep);
@@ -277,7 +276,7 @@ static struct frameconv * frame_init (
 #ifdef WITH_ERRORS
 	  char *inoutep;
 	  
-	  if (newf->fwd > 0) inoutep = strdup ("input");
+	  if (fcparam->fwd > 0) inoutep = strdup ("input");
 	  else inoutep = strdup ("output");
 	  fprintf (stderr, "GGL Common Library -- swiss\n");
 	  fprintf (stderr,
@@ -289,7 +288,7 @@ static struct frameconv * frame_init (
 	  return NULL;
 	}
     }
-  scale = fcparam->scale + dt*fcparam->dscale;
+  newf->scale = fcparam->scale + dt*fcparam->dscale;
   for (i=0;i<3;i++) 
     {
       newf->dx[i] = fcparam->dx[i] + dt*fcparam->ddx[i];

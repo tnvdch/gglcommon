@@ -260,9 +260,8 @@ int dayofyear2(double mjd)
 double mjdnow ()
 {
   struct timeval t;
-  int errchk;
 
-  errchk=gettimeofday(&t,NULL);
+  gettimeofday(&t,NULL);
   return ((t.tv_sec+(t.tv_usec/(double)1000000.0)) /(double) 86400.0 + SYSMJD0);
 }
 

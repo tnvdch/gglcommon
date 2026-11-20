@@ -117,7 +117,7 @@ int main ( int argc, char **argv)
   
   /* for use in main */
   char entireline[MAXLINELENGTH];
-  struct scoordcol coordstr; 
+  //struct scoordcol coordstr; 
   char *prefixstr;  
   char *suffixstr;
   int charcount;
@@ -214,7 +214,7 @@ int main ( int argc, char **argv)
 	  outft = NULL;
 	  return EXIT_FAILURE;
   }
-  coordstr.count = in_fcol[0] + in_fcol[1] + in_fcol[2];
+  //coordstr.count = in_fcol[0] + in_fcol[1] + in_fcol[2];
   err = select_formtype(outft, out_ftyp, out_fcol);
 #ifdef LIB_DEBUG
   fprintf (stderr, "%d out typ %d %d %d col %d %d %d\n", err,

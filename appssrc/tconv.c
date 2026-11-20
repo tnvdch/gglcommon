@@ -339,7 +339,7 @@ int main ( int argc, char **argv)
   int arg_char;		
 
   /* default initialization of param used in command line parsing */
-  int verbose = FALSE;
+ // int verbose = FALSE;
   int keep = FALSE;
   int prefix_char = 0;
   int prefix_col = 0;
@@ -378,7 +378,7 @@ int main ( int argc, char **argv)
       case 'V': display_version();	   /* -V   the version string */
 	return EXIT_SUCCESS;
 
-      case 'v': verbose = TRUE;       	break;
+//      case 'v': verbose = TRUE;       	break;
 	
       case 'k': keep = TRUE;       	break;
 	

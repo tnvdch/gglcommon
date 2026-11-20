@@ -285,7 +285,7 @@ int main ( int argc, char **argv)
 	}
 	while (read_line_static (stdin, entireline, 1024) != EOF) {
 		linecount++;
-		if (entireline == NULL) break;
+		//if (entireline == NULL) break;
 		if (entireline[0] == '#' || entireline[0] == '$' ||
 		    entireline[0] == '\n'|| entireline[0] == '\r') {
 			fprintf (stdout, "%s", entireline);

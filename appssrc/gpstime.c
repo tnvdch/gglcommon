@@ -48,7 +48,7 @@ int main(int argc, char * argv[])
 {
 
   struct ttime t;
-  int id, DayinYear, DayinWeek, GPSWeek;
+  int id, DayinYear, DayinWeek, GPSWeek, num;
   double GPSSec;
 
   printf (" *  DISCLAIMER:   This program is free software; you can redistribute\n");
@@ -75,20 +75,21 @@ int main(int argc, char * argv[])
       printf("      (5)   Actual time          (5) \n");
       printf("      (0)   -- prog stop --      (0) \n");
       printf("                                    ----> ");
-      scanf("%d%*[^\n]", &id);
+      num = scanf("%d%*[^\n]", &id);
       getchar();
 
       putchar('\n');
       memset(&t, 0, sizeof(struct ttime));
       t.hour = 1;
 
+	  if ((num > 0) && (id > 0))
       switch (id) 
 	{
 
 	case 1:
 	  {
 	    printf("      (1)   Year  Month  Day     (1)   ");
-	    scanf("%d%d%d%*[^\n]", &t.year, &t.month, &t.day);
+	    num = scanf("%d%d%d%*[^\n]", &t.year, &t.month, &t.day);
 	    getchar();
 	    datmjd(&t);
 	    DayinYear = dayofyear1(&t);
@@ -100,7 +101,7 @@ int main(int argc, char * argv[])
 	case 2:
 	  {
 	    printf("      (2)   Year  DayofYear      (2)   ");
-	    scanf("%d%d%*[^\n]", &t.year, &DayinYear);
+	    num = scanf("%d%d%*[^\n]", &t.year, &DayinYear);
 	    getchar();
 	    t.month = 1;
 	    t.day = 1;
@@ -116,7 +117,7 @@ int main(int argc, char * argv[])
 	case 3:
 	  {
 	    printf("      (3)   GPSWeek  DayofWeek   (3)   ");
-	    scanf("%d%d%*[^\n]", &GPSWeek, &DayinWeek);
+	    num = scanf("%d%d%*[^\n]", &GPSWeek, &DayinWeek);
 	    getchar();
 	    GPSSec = DayinWeek * 86400.0;
 	    t.mjd = gps_to_mjd(GPSSec, GPSWeek);
@@ -128,7 +129,7 @@ int main(int argc, char * argv[])
 	case 4:
 	  {
 	    printf("      (4)   modified julian day  (4)   ");
-	    scanf("%lg%*[^\n]", &t.mjd);
+	    num = scanf("%lg%*[^\n]", &t.mjd);
 	    getchar();
 	    mjddat(&t);
 	    mjd_to_gps(t.mjd, &GPSSec, &GPSWeek);
@@ -138,6 +139,7 @@ int main(int argc, char * argv[])
 	  }
 
 	case 5:
+	default:
 	  {
 	    systimenow(&t);
 	    mjd_to_gps(t.mjd, &GPSSec, &GPSWeek);
@@ -158,7 +160,7 @@ int main(int argc, char * argv[])
 	  printf("      (4)        MJD           (4)      : ");
 	  printf("%11.0f\n\n", t.mjd);
 	  printf("        Press Enter to continue \n");
-	  scanf("%*[^\n]");
+	  num = scanf("%*[^\n]");
 	  getchar();
 	}
     } while (id != 0);
